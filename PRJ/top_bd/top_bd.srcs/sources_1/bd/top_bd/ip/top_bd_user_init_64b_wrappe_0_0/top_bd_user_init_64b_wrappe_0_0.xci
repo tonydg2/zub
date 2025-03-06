@@ -1,0 +1,46 @@
+{
+  "schema": "xilinx.com:schema:json_instance:1.0",
+  "ip_inst": {
+    "xci_name": "top_bd_user_init_64b_wrappe_0_0",
+    "cell_name": "user_init_64b_wrappe_0",
+    "component_reference": "xilinx.com:module_ref:user_init_64b_wrapper_zynq:1.0",
+    "ip_revision": "1",
+    "gen_directory": "../../../../../../top_bd.gen/sources_1/bd/top_bd/ip/top_bd_user_init_64b_wrappe_0_0",
+    "parameters": {
+      "component_parameters": {
+        "Component_Name": [ { "value": "top_bd_user_init_64b_wrappe_0_0", "resolve_type": "user", "usage": "all" } ]
+      },
+      "project_parameters": {
+        "ARCHITECTURE": [ { "value": "zynquplus" } ],
+        "BASE_BOARD_PART": [ { "value": "" } ],
+        "BOARD_CONNECTIONS": [ { "value": "" } ],
+        "DEVICE": [ { "value": "xczu1cg" } ],
+        "PACKAGE": [ { "value": "sbva484" } ],
+        "PREFHDL": [ { "value": "VERILOG" } ],
+        "SILICON_REVISION": [ { "value": "" } ],
+        "SIMULATOR_LANGUAGE": [ { "value": "MIXED" } ],
+        "SPEEDGRADE": [ { "value": "-1" } ],
+        "STATIC_POWER": [ { "value": "" } ],
+        "TEMPERATURE_GRADE": [ { "value": "E" } ]
+      },
+      "runtime_parameters": {
+        "IPCONTEXT": [ { "value": "IP_Integrator" } ],
+        "IPREVISION": [ { "value": "1" } ],
+        "MANAGED": [ { "value": "TRUE" } ],
+        "OUTPUTDIR": [ { "value": "../../../../../../top_bd.gen/sources_1/bd/top_bd/ip/top_bd_user_init_64b_wrappe_0_0" } ],
+        "SELECTEDSIMMODEL": [ { "value": "" } ],
+        "SHAREDDIR": [ { "value": "../../ipshared" } ],
+        "SWVERSION": [ { "value": "2023.2" } ],
+        "SYNTHESISFLOW": [ { "value": "OOC_HIERARCHICAL" } ]
+      }
+    },
+    "boundary": {
+      "ports": {
+        "value_o": [ { "direction": "out", "size_left": "63", "size_right": "0" } ],
+        "usr_access_cfgclk_o": [ { "direction": "out" } ],
+        "usr_access_datavalid_o": [ { "direction": "out" } ],
+        "usr_access_data_o": [ { "direction": "out", "size_left": "31", "size_right": "0" } ]
+      }
+    }
+  }
+}

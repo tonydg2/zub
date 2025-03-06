@@ -1,0 +1,18 @@
+#-----------------------------------------------------------
+# Vivado v2023.2 (64-bit)
+# SW Build 4029153 on Fri Oct 13 20:13:54 MDT 2023
+# IP Build 4028589 on Sat Oct 14 00:45:43 MDT 2023
+# SharedData Build 4025554 on Tue Oct 10 17:18:54 MDT 2023
+# Start of session at: Thu Mar  6 13:02:48 2025
+# Process ID: 531235
+# Current directory: /mnt/TDG_512/projects/6_zub/scripts
+# Command line: vivado
+# Log file: /mnt/TDG_512/projects/6_zub/scripts/vivado.log
+# Journal file: /mnt/TDG_512/projects/6_zub/scripts/vivado.jou
+# Running On: tony-MS-7693, OS: Linux, CPU Frequency: 2025.984 MHz, CPU Physical cores: 8, Host memory: 33601 MB
+#-----------------------------------------------------------
+start_gui
+open_project /mnt/TDG_512/docs/ZUBoard_docs/zub1cg_sbc_base_2023_2/hardware/zub1cg_sbc_base_2023_2/zub1cg_sbc_base.xpr
+update_compile_order -fileset sources_1
+open_bd_design {/mnt/TDG_512/docs/ZUBoard_docs/zub1cg_sbc_base_2023_2/hardware/zub1cg_sbc_base_2023_2/zub1cg_sbc_base.srcs/sources_1/bd/zub1cg_sbc_base/zub1cg_sbc_base.bd}
+report_ip_status -name ip_status 
