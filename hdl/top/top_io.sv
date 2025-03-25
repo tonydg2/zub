@@ -32,38 +32,43 @@ module top_io (
 //  );
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // SCRIPTS
-  user_init_64b git_hash_scripts_inst (
+//  user_init_64b git_hash_scripts_inst (
+  user_init_64b scripts_git_hash_inst (
     .clk      (1'b0),
     .value_o  (git_hash_scripts)
   );
 
-  user_init_32b timestamp_scripts_inst (
+//  user_init_32b timestamp_scripts_inst (
+  user_init_32b scripts_timestamp_inst (
     .clk      (1'b0),
     .value_o  (timestamp_scripts)
   );
 
 // TOP
-  user_init_64b git_hash_top_inst (
+//  user_init_64b git_hash_top_inst (
+  user_init_64b top_git_hash_inst (
     .clk      (1'b0),
     .value_o  (git_hash_top)
   );
 
-  user_init_32b timestamp_top_inst (
+//  user_init_32b timestamp_top_inst (
+  user_init_32b top_timestamp_inst (
     .clk      (1'b0),
     .value_o  (timestamp_top)
   );
 
 // Common
-  user_init_64b git_hash_common_inst (
+//  user_init_64b git_hash_common_inst (
+  user_init_64b common_git_hash_inst (
     .clk      (1'b0),
     .value_o  (git_hash_common)
   );
 
-  user_init_32b timestamp_common_inst (
+//  user_init_32b timestamp_common_inst (
+  user_init_32b common_timestamp_inst (
     .clk      (1'b0),
     .value_o  (timestamp_common)
   );
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
   logic [1:0] idx;
