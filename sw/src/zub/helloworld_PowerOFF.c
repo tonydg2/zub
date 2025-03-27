@@ -28,8 +28,7 @@
 
 
 #define BD_REG32_ADDR   XPAR_AXIL_REG32_0_BASEADDR
-//#define BD_REG32_2_ADDR 0xa0010000
-//#define BD_REG32_2_ADDR 0xa0001000
+#define BD_REG32_2_ADDR 0xa0010000
 
 void ledCfg(void);
 void ledToggle(int shift, int bank, int onOff);
@@ -76,22 +75,22 @@ int main()
         powerOff();
       } else if (Ch == 'b') {break;
       } else if (Ch == 'a') {   xil_printf("NULL\r\n");
-      } else if (Ch == 'c') {val = Xil_In32(BD_REG32_ADDR + 0x0); xil_printf("val=%x\r\n",val);
-      } else if (Ch == 'd') {val = Xil_In32(BD_REG32_ADDR + 0x4); xil_printf("val=%x\r\n",val);
-      } else if (Ch == 'e') {val = Xil_In32(BD_REG32_ADDR + 0x8); xil_printf("val=%x\r\n",val);
-      } else if (Ch == 'f') {val = Xil_In32(BD_REG32_ADDR + 0xC); xil_printf("val=%x\r\n",val);
-      } else if (Ch == 'g') {val = Xil_In32(BD_REG32_ADDR + 0x10); xil_printf("val=%x\r\n",val);
-      } else if (Ch == 'h') {val = Xil_In32(BD_REG32_ADDR + 0x14); xil_printf("val=%x\r\n",val);
-      } else if (Ch == 'i') {val = Xil_In32(BD_REG32_ADDR + 0x18); xil_printf("val=%x\r\n",val);
-      } else if (Ch == 'j') {val = Xil_In32(BD_REG32_ADDR + 0x1C); xil_printf("val=%x\r\n",val);
-      } else if (Ch == 'k') {val = Xil_In32(BD_REG32_ADDR + 0x20); xil_printf("val=%x\r\n",val);
-      } else if (Ch == 'l') {val = Xil_In32(BD_REG32_ADDR + 0x24); xil_printf("val=%x\r\n",val);
-      } else if (Ch == 'm') {val = Xil_In32(BD_REG32_ADDR + 0x28); xil_printf("val=%x\r\n",val);
-      } else if (Ch == 'n') {val = Xil_In32(BD_REG32_ADDR + 0x2C); xil_printf("val=%x\r\n",val);
-      } else if (Ch == 'o') {ledCfg();
-      } else if (Ch == 'q') {ledON();
-      } else if (Ch == 'r') {ledOff();
-      } else if (Ch == 's') {getTstamps();
+      } else if (Ch == 'c') {   val = Xil_In32(BD_REG32_2_ADDR + 0x0); xil_printf("gh0=%d\r\n",val);
+      } else if (Ch == 'd') {   
+      } else if (Ch == 'e') {   
+      } else if (Ch == 'f') {   
+      } else if (Ch == 'g') {   
+      } else if (Ch == 'h') {   
+      } else if (Ch == 'i') {   
+      } else if (Ch == 'j') {   
+      } else if (Ch == 'k') {   
+      } else if (Ch == 'l') {   
+      } else if (Ch == 'm') {   
+      } else if (Ch == 'n') {   
+      } else if (Ch == 'o') {   
+      } else if (Ch == 'q') {   
+      } else if (Ch == 'r') {   
+      } else if (Ch == 's') {   
       } else if (Ch == 't') {
         //val = Xil_In32(BD_REG32_2_ADDR + 0x0); xil_printf("gh0=%d\r\n",val);
         //val = Xil_In32(BD_REG32_2_ADDR + 0x4); xil_printf("gh1=%d\r\n",val);
@@ -117,7 +116,17 @@ int main()
     
     return 0;
 }
+// git_hash[31: 0];    //  0x0
+// git_hash[63:32];    //  0x4
+// timestamp;          //  0x8
+// git_hash_led[31: 0];//  0xC
+// git_hash_led[63:32];//  0x10
+// timestamp_led;      //  0x14
 
+
+
+
+// functions for ZUBoard (NOT u96)
 void getTstamps(void) 
 {
     gitPrint(0x0,"Top");
