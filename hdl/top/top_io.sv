@@ -24,12 +24,14 @@ module top_io (
   logic         GPIO_PL_wvalid      ;
 
   logic [31:0] gpio_io_i,gpio_io_o,gpio_io_t,gpio2_io_i,gpio2_io_o,gpio2_io_t;
+  logic i2c0_scl_i=1, i2c0_scl_o, i2c0_scl_t, i2c0_sda_i=1, i2c0_sda_o, i2c0_sda_t, i2c_int;
 
   logic led0,led1,clk100,rst,rstn;
   logic [4:0] led_div1,p0,p1;
   logic [63:0]  git_hash_scripts,git_hash_top,git_hash_common;
   logic [31:0]  timestamp_scripts,timestamp_top,timestamp_common;
   logic [2:0]   gpio,gpio2;
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
   top_bd_wrapper top_bd_wrapper_inst (
@@ -55,6 +57,13 @@ module top_io (
     .M_AXI_GPIO_PL_wready   (GPIO_PL_wready     ),
     .M_AXI_GPIO_PL_wstrb    (GPIO_PL_wstrb      ),
     .M_AXI_GPIO_PL_wvalid   (GPIO_PL_wvalid     ),
+    .emio_i2c0_scl_i_0      (i2c0_scl_i         ),//input 
+    .emio_i2c0_scl_o_0      (i2c0_scl_o         ),//output
+    .emio_i2c0_scl_t_0      (i2c0_scl_t         ),//output
+    .emio_i2c0_sda_i_0      (i2c0_sda_i         ),//input 
+    .emio_i2c0_sda_o_0      (i2c0_sda_o         ),//output
+    .emio_i2c0_sda_t_0      (i2c0_sda_t         ),//output
+    .ps_pl_irq_i2c0_0       (i2c_int            ),
     .git_hash_top           (git_hash_top       ),
     .timstamp_top           (timestamp_top      ),
     .git_hash_scripts       (git_hash_scripts   ),
@@ -98,11 +107,11 @@ gpio axi_gpio_pl (
   .gpio2_io_t     (gpio2_io_t        )    // output wire [31 : 0] gpio2_io_t
 );
 
-ila1 ila1 (
-	.clk(clk100), // input wire clk
-	.probe0(gpio_io_o[4:0]),  // input wire [4:0]  probe0  
-	.probe1(gpio2_io_o[4:0])   // input wire [4:0]  probe1
-);
+//ila1 ila1 (
+//	.clk(clk100), // input wire clk
+//	.probe0(gpio_io_o[4:0]),  // input wire [4:0]  probe0  
+//	.probe1(gpio2_io_o[4:0])   // input wire [4:0]  probe1
+//);
 
   assign gpio_io_i  = gpio2_io_o;
   assign gpio2_io_i = gpio_io_o;
@@ -185,8 +194,13 @@ ila1 ila1 (
   assign led_1[1] = gpio2[1];
   assign led_1[0] = gpio2[2];
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+ila1 ila1 (
+	.clk(clk100), // input wire clk
+	.probe0({0,i2c_int,i2c0_scl_i, i2c0_scl_o, i2c0_scl_t}  ),  // input wire [4:0]  probe0  
+	.probe1({0,0,i2c0_sda_i, i2c0_sda_o, i2c0_sda_t}  )   // input wire [4:0]  probe1
+);
 
 
 endmodule
