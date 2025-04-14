@@ -6,3 +6,15 @@ set_property PACKAGE_PIN A2 [get_ports {led_1[1]}]; # HP_GPIO_RGB2_G
 set_property PACKAGE_PIN F4 [get_ports {led_1[2]}]; # HP_GPIO_RGB2_B 
 
 set_property IOSTANDARD LVCMOS18 [get_ports {led*}]
+
+
+
+
+create_pblock pblock_i2c_sink_0
+resize_pblock pblock_i2c_sink_0 -add {SLICE_X3Y60:SLICE_X25Y90 DSP48E2_X0Y24:DSP48E2_X2Y35 RAMB18_X0Y24:RAMB18_X2Y35 RAMB36_X0Y12:RAMB36_X2Y17}
+add_cells_to_pblock pblock_i2c_sink_0 [get_cells [list i2c_sink_inst]] -clear_locs
+
+create_pblock pblock_i2c_sink_1
+resize_pblock pblock_i2c_sink_1 -add {SLICE_X3Y0:SLICE_X25Y28 DSP48E2_X0Y0:DSP48E2_X2Y9 RAMB18_X1Y0:RAMB18_X2Y9 RAMB36_X1Y0:RAMB36_X2Y4}
+add_cells_to_pblock pblock_i2c_sink_1 [get_cells [list i2c_sink1_inst]] -clear_locs
+
