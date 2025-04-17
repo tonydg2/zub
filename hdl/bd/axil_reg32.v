@@ -717,8 +717,8 @@
 	end    
 
 	// Add user logic here
-  assign led_div0_o = slv_reg6[4:0];
-  assign led_div1_o = slv_reg7[4:0];
+  assign led_div0_o = slv_reg12[4:0];
+  assign led_div1_o = slv_reg13[4:0];
 	// User logic ends
 
 	endmodule

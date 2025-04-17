@@ -10,8 +10,8 @@ module top_io (
   logic [63:0]  git_hash_scripts,git_hash_top,git_hash_common;
   logic [31:0]  timestamp_scripts,timestamp_top,timestamp_common;
   logic [2:0]   gpio,gpio2;
-  logic i2c0_scl_i=1, i2c0_scl_o, i2c0_scl_t, i2c0_sda_i=1, i2c0_sda_o, i2c0_sda_t, i2c_int;
-  logic i2c1_scl_i=1, i2c1_scl_o, i2c1_scl_t, i2c1_sda_i=1, i2c1_sda_o, i2c1_sda_t;
+  logic i2c0_scl_i, i2c0_scl_o, i2c0_scl_t, i2c0_sda_i, i2c0_sda_o, i2c0_sda_t, i2c_int;
+  logic i2c1_scl_i, i2c1_scl_o, i2c1_scl_t, i2c1_sda_i, i2c1_sda_o, i2c1_sda_t;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -21,48 +21,73 @@ module top_io (
     .periph_rstn            (rstn               ),
     .led_div1_o_0           (led_div1           ),
     .led_o_0                (led0               ),
-    .emio_i2c0_scl_i_0      (i2c0_scl_i         ), 
-    .emio_i2c0_scl_o_0      (i2c0_scl_o         ), 
-    .emio_i2c0_scl_t_0      (i2c0_scl_t         ), 
-    .emio_i2c0_sda_i_0      (i2c0_sda_i         ), 
-    .emio_i2c0_sda_o_0      (i2c0_sda_o         ), 
-    .emio_i2c0_sda_t_0      (i2c0_sda_t         ), 
-    .emio_i2c1_scl_i_0      (i2c1_scl_i         ), 
-    .emio_i2c1_scl_o_0      (i2c1_scl_o         ), 
-    .emio_i2c1_scl_t_0      (i2c1_scl_t         ), 
-    .emio_i2c1_sda_i_0      (i2c1_sda_i         ), 
-    .emio_i2c1_sda_o_0      (i2c1_sda_o         ), 
-    .emio_i2c1_sda_t_0      (i2c1_sda_t         )
+    .emio_i2c0_scl_i_0      (i2c0_scl_i         ), // input 
+    .emio_i2c0_scl_o_0      (i2c0_scl_o         ), // output
+    .emio_i2c0_scl_t_0      (i2c0_scl_t         ), // output
+    .emio_i2c0_sda_i_0      (i2c0_sda_i         ), // input 
+    .emio_i2c0_sda_o_0      (i2c0_sda_o         ), // output
+    .emio_i2c0_sda_t_0      (i2c0_sda_t         ), // output
+    .emio_i2c1_scl_i_0      (i2c1_scl_i         ), // input 
+    .emio_i2c1_scl_o_0      (i2c1_scl_o         ), // output
+    .emio_i2c1_scl_t_0      (i2c1_scl_t         ), // output
+    .emio_i2c1_sda_i_0      (i2c1_sda_i         ), // input 
+    .emio_i2c1_sda_o_0      (i2c1_sda_o         ), // output
+    .emio_i2c1_sda_t_0      (i2c1_sda_t         )  // output 
   );
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-(* dont_touch = "true" *) i2c_sink i2c_sink_inst (
+logic [9:0] bscan_vec;
+logic tdo;
+
+//bscan bscan_inst (
+//  .bscan_o  (bscan_vec),
+//  .tdo_i    (tdo)
+//);
+
+// !! DONT FORGET ABOUT BLACKBOX DECLARATION BOOTOM OF FILE! WHEN CHANGING PORTS!!
+(* DONT_TOUCH = "TRUE", KEEP_HIERARCHY = "TRUE" *) i2c_top i2c_top_inst (
   .clk    (clk100     ),
   .rst    (rst        ),
-  .scl_i  (i2c0_scl_o ),
-  .scl_t  (i2c0_scl_t ),
-  .scl_o  (i2c0_scl_i ),
-  .sda_i  (i2c0_sda_o ),
-  .sda_o  (i2c0_sda_i ),
-  .sda_t  (i2c0_sda_t )
+  .scl0_i (i2c0_scl_o ),
+  .scl0_t (i2c0_scl_t ),
+  .scl0_o (i2c0_scl_i ),
+  .sda0_i (i2c0_sda_o ),
+  .sda0_o (i2c0_sda_i ),
+  .sda0_t (i2c0_sda_t ),
+  .scl1_i (i2c1_scl_o ),
+  .scl1_t (i2c1_scl_t ),
+  .scl1_o (i2c1_scl_i ),
+  .sda1_i (i2c1_sda_o ),
+  .sda1_o (i2c1_sda_i ),
+  .sda1_t (i2c1_sda_t ),
+  .S_BSCAN_drck(),
+  .S_BSCAN_shift(),
+  .S_BSCAN_tdi(),
+  .S_BSCAN_update(),
+  .S_BSCAN_sel(),
+  .S_BSCAN_tdo(),
+  .S_BSCAN_tms(),
+  .S_BSCAN_tck(),
+  .S_BSCAN_runtest(),
+  .S_BSCAN_reset(),
+  .S_BSCAN_capture(),
+  .S_BSCAN_bscanid_en()  
 );
 
-(* dont_touch = "true" *) i2c_sink1 i2c_sink1_inst (
-  .clk    (clk100     ),
-  .rst    (rst        ),
-  .scl_i  (i2c1_scl_o ),
-  .scl_t  (i2c1_scl_t ),
-  .scl_o  (i2c1_scl_i ),
-  .sda_i  (i2c1_sda_o ),
-  .sda_o  (i2c1_sda_i ),
-  .sda_t  (i2c1_sda_t )
+
+logic clk8;
+
+clk_div #(
+  .DIV(8)
+) clk_div_inst (
+  .clk_i (clk100),
+  .clk_o (clk8) // 12.5M
 );
 
-
+//2,000,000
 ila1 ila1 (
-	.clk(clk100), // input wire clk
+	.clk(clk8), // input wire clk
 	.probe0({0, i2c0_scl_i, i2c0_scl_o, i2c0_scl_t, i2c0_sda_i, i2c0_sda_o, i2c0_sda_t}  ),  // input wire [6:0]  probe0  
 	.probe1({0, i2c1_scl_i, i2c1_scl_o, i2c1_scl_t, i2c1_sda_i, i2c1_sda_o, i2c1_sda_t}  )   // input wire [6:0]  probe1
 );
@@ -102,6 +127,35 @@ ila1 ila1 (
 endmodule
 
 // blackbox for DFX
+module i2c_top (
+  input       clk     ,
+  input       rst     ,
+  input       scl0_i  ,
+  input       scl0_t  ,
+  output      scl0_o  ,
+  input       sda0_i  ,
+  output      sda0_o  ,
+  input       sda0_t  ,
+  input       scl1_i  ,
+  input       scl1_t  ,
+  output      scl1_o  ,
+  input       sda1_i  ,
+  output      sda1_o  ,
+  input       sda1_t  ,
+  input       S_BSCAN_drck        ,
+  input       S_BSCAN_shift       ,
+  input       S_BSCAN_tdi         ,
+  input       S_BSCAN_update      ,
+  input       S_BSCAN_sel         ,
+  output      S_BSCAN_tdo         ,
+  input       S_BSCAN_tms         ,
+  input       S_BSCAN_tck         ,
+  input       S_BSCAN_runtest     ,
+  input       S_BSCAN_reset       ,
+  input       S_BSCAN_capture     ,
+  input       S_BSCAN_bscanid_en  
+); endmodule
+/*
 module i2c_sink (
   input   clk   ,
   input   rst   ,
@@ -123,3 +177,4 @@ module i2c_sink1 (
   output  sda_o ,
   input   sda_t);
 endmodule
+*/
