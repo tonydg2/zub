@@ -21,6 +21,8 @@ module top_io (
     .periph_rstn            (rstn               ),
     .led_div1_o_0           (led_div1           ),
     .led_o_0                (led0               ),
+    .git_hash_top           (git_hash_top       ),
+    .timstamp_top           (timestamp_top      ),
     .emio_i2c0_scl_i_0      (i2c0_scl_i         ), // input 
     .emio_i2c0_scl_o_0      (i2c0_scl_o         ), // output
     .emio_i2c0_scl_t_0      (i2c0_scl_t         ), // output
@@ -40,27 +42,26 @@ module top_io (
 logic [9:0] bscan_vec;
 logic tdo;
 
-//bscan bscan_inst (
-//  .bscan_o  (bscan_vec),
-//  .tdo_i    (tdo)
-//);
 
 // !! DONT FORGET ABOUT BLACKBOX DECLARATION BOOTOM OF FILE! WHEN CHANGING PORTS!!
 (* DONT_TOUCH = "TRUE", KEEP_HIERARCHY = "TRUE" *) i2c_top i2c_top_inst (
-  .clk    (clk100     ),
-  .rst    (rst        ),
-  .scl0_i (i2c0_scl_o ),
-  .scl0_t (i2c0_scl_t ),
-  .scl0_o (i2c0_scl_i ),
-  .sda0_i (i2c0_sda_o ),
-  .sda0_o (i2c0_sda_i ),
-  .sda0_t (i2c0_sda_t ),
-  .scl1_i (i2c1_scl_o ),
-  .scl1_t (i2c1_scl_t ),
-  .scl1_o (i2c1_scl_i ),
-  .sda1_i (i2c1_sda_o ),
-  .sda1_o (i2c1_sda_i ),
-  .sda1_t (i2c1_sda_t ),
+  .clk            (clk100         ),
+  .clk12          (clk8),
+  .rst            (rst            ),
+  .git_hash_top   (git_hash_top   ),
+  .timestamp_top  (timestamp_top  ),
+  .scl0_i         (i2c0_scl_o     ),
+  .scl0_t         (i2c0_scl_t     ),
+  .scl0_o         (i2c0_scl_i     ),
+  .sda0_i         (i2c0_sda_o     ),
+  .sda0_o         (i2c0_sda_i     ),
+  .sda0_t         (i2c0_sda_t     ),
+  .scl1_i         (i2c1_scl_o     ),
+  .scl1_t         (i2c1_scl_t     ),
+  .scl1_o         (i2c1_scl_i     ),
+  .sda1_i         (i2c1_sda_o     ),
+  .sda1_o         (i2c1_sda_i     ),
+  .sda1_t         (i2c1_sda_t     ),
   .S_BSCAN_drck(),
   .S_BSCAN_shift(),
   .S_BSCAN_tdi(),
@@ -129,7 +130,10 @@ endmodule
 // blackbox for DFX
 module i2c_top (
   input       clk     ,
+  input       clk12     ,
   input       rst     ,
+  output [63:0] git_hash_top,
+  output [31:0] timestamp_top,
   input       scl0_i  ,
   input       scl0_t  ,
   output      scl0_o  ,

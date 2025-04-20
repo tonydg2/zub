@@ -249,6 +249,8 @@ proc create_root_design { parentCell } {
   set emio_i2c1_sda_o_0 [ create_bd_port -dir O emio_i2c1_sda_o_0 ]
   set emio_i2c0_scl_t_0 [ create_bd_port -dir O emio_i2c0_scl_t_0 ]
   set emio_i2c1_sda_t_0 [ create_bd_port -dir O emio_i2c1_sda_t_0 ]
+  set git_hash_top [ create_bd_port -dir I -from 63 -to 0 git_hash_top ]
+  set timstamp_top [ create_bd_port -dir I -from 31 -to 0 timstamp_top ]
 
   # Create instance: zynq_ultra_ps_e_0, and set properties
   set zynq_ultra_ps_e_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:zynq_ultra_ps_e:3.5 zynq_ultra_ps_e_0 ]
@@ -758,10 +760,12 @@ Port;FD4A0000;FD4AFFFF;1|FPD;DPDMA;FD4C0000;FD4CFFFF;1|FPD;DDR_XMPU5_CFG;FD05000
   connect_bd_net -net emio_i2c0_sda_i_0_1 [get_bd_ports emio_i2c0_sda_i_0] [get_bd_pins zynq_ultra_ps_e_0/emio_i2c0_sda_i]
   connect_bd_net -net emio_i2c1_scl_i_0_1 [get_bd_ports emio_i2c1_scl_i_0] [get_bd_pins zynq_ultra_ps_e_0/emio_i2c1_scl_i]
   connect_bd_net -net emio_i2c1_sda_i_0_1 [get_bd_ports emio_i2c1_sda_i_0] [get_bd_pins zynq_ultra_ps_e_0/emio_i2c1_sda_i]
+  connect_bd_net -net git_hash_top_0_1 [get_bd_ports git_hash_top] [get_bd_pins axil_reg32_0/git_hash_top]
   connect_bd_net -net led_cnt_vhd19_0_led_o [get_bd_pins led_cnt_vhd19_0/led_o] [get_bd_ports led_o_0]
   connect_bd_net -net proc_sys_reset_0_interconnect_aresetn [get_bd_pins proc_sys_reset_0/interconnect_aresetn] [get_bd_pins smartconnect_0/aresetn]
   connect_bd_net -net proc_sys_reset_0_peripheral_aresetn [get_bd_pins proc_sys_reset_0/peripheral_aresetn] [get_bd_pins axil_reg32_0/S_AXI_ARESETN] [get_bd_ports periph_rstn]
   connect_bd_net -net proc_sys_reset_0_peripheral_reset [get_bd_pins proc_sys_reset_0/peripheral_reset] [get_bd_ports rst] [get_bd_pins led_cnt_vhd19_0/rst]
+  connect_bd_net -net timstamp_top_0_1 [get_bd_ports timstamp_top] [get_bd_pins axil_reg32_0/timstamp_top]
   connect_bd_net -net user_init_64b_wrappe_0_usr_access_data_o [get_bd_pins user_init_64b_wrappe_0/usr_access_data_o] [get_bd_pins axil_reg32_0/timstamp_bd]
   connect_bd_net -net user_init_64b_wrappe_0_value_o [get_bd_pins user_init_64b_wrappe_0/value_o] [get_bd_pins axil_reg32_0/git_hash_bd]
   connect_bd_net -net xlconstant_0_dout [get_bd_pins xlconstant_0/dout] [get_bd_pins led_cnt_vhd19_0/wren_i]
