@@ -46,6 +46,7 @@ module i2c_top (
 
 (* DONT_TOUCH = "TRUE", KEEP_HIERARCHY = "TRUE" *) i2c_sink i2c_sink_inst (
     .clk    (clk    ),
+    .clk12  (clk12),
     .rst    (rst    ),
     .scl_i  (scl0_i ),
     .scl_t  (scl0_t ),
@@ -66,7 +67,7 @@ module i2c_top (
 //    .sda_t  (sda1_t )
 //  );
 
-
+/*
   logic scl,sda, scl_re,scl_fe,sda_re,sda_fe, clk12, scl_o, sda_o;
   logic [1:0] scl_sr, sda_sr;
   logic [4:0] cnt, sm_dbg;
@@ -165,6 +166,7 @@ ila2 ila2 (
 `endif
 `endif 
 
+*/
 
 endmodule
 

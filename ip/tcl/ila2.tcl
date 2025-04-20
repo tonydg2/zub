@@ -5,13 +5,13 @@ if {![file exists $ipDir]} {error "ip directory not present"}
 
 create_ip -name ila -vendor xilinx.com -library ip -version 6.2 -module_name $modName -dir $ipDir -force
 set_property -dict [list \
-  CONFIG.C_DATA_DEPTH {8192} \
+  CONFIG.C_DATA_DEPTH {32768} \
   CONFIG.C_NUM_OF_PROBES {5} \
   CONFIG.C_PROBE0_WIDTH {8} \
   CONFIG.C_PROBE1_WIDTH {8} \
-  CONFIG.C_PROBE2_WIDTH {8} \
-  CONFIG.C_PROBE3_WIDTH {1} \
-  CONFIG.C_PROBE4_WIDTH {1} \
+  CONFIG.C_PROBE2_WIDTH {16} \
+  CONFIG.C_PROBE3_WIDTH {8} \
+  CONFIG.C_PROBE4_WIDTH {3} \
   CONFIG.ALL_PROBE_SAME_MU_CNT {4} \
 ] [get_ips $modName]
 
