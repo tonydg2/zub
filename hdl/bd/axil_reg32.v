@@ -24,9 +24,9 @@
     input [63:0]  git_hash_common,
     input [31:0]  timstamp_common,
 
-    output [4:0] led_div0_o,
-    output [4:0] led_div1_o,
-
+    output [4:0]  led_div0_o,
+    output [4:0]  led_div1_o,
+    output [16:0] i2c_send_data,
 		// User ports ends
 		// Do not modify the ports beyond this line
 
@@ -717,8 +717,9 @@
 	end    
 
 	// Add user logic here
-  assign led_div0_o = slv_reg12[4:0];
-  assign led_div1_o = slv_reg13[4:0];
+  assign led_div0_o     = slv_reg12[4:0];
+  assign led_div1_o     = slv_reg13[4:0];
+  assign i2c_send_data  = slv_reg14[16:0]; // en + data[15:0]
 	// User logic ends
 
 	endmodule

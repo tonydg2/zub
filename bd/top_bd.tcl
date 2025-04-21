@@ -251,6 +251,7 @@ proc create_root_design { parentCell } {
   set emio_i2c1_sda_t_0 [ create_bd_port -dir O emio_i2c1_sda_t_0 ]
   set git_hash_top [ create_bd_port -dir I -from 63 -to 0 git_hash_top ]
   set timstamp_top [ create_bd_port -dir I -from 31 -to 0 timstamp_top ]
+  set i2c_send_data_o [ create_bd_port -dir O -from 16 -to 0 i2c_send_data_o ]
 
   # Create instance: zynq_ultra_ps_e_0, and set properties
   set zynq_ultra_ps_e_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:zynq_ultra_ps_e:3.5 zynq_ultra_ps_e_0 ]
@@ -754,6 +755,7 @@ Port;FD4A0000;FD4AFFFF;1|FPD;DPDMA;FD4C0000;FD4CFFFF;1|FPD;DDR_XMPU5_CFG;FD05000
   connect_bd_intf_net -intf_net zynq_ultra_ps_e_0_M_AXI_HPM0_FPD [get_bd_intf_pins smartconnect_0/S00_AXI] [get_bd_intf_pins zynq_ultra_ps_e_0/M_AXI_HPM0_FPD]
 
   # Create port connections
+  connect_bd_net -net axil_reg32_0_i2c_send_data [get_bd_pins axil_reg32_0/i2c_send_data] [get_bd_ports i2c_send_data_o]
   connect_bd_net -net axil_reg32_0_led_div0_o [get_bd_pins axil_reg32_0/led_div0_o] [get_bd_pins led_cnt_vhd19_0/div_i]
   connect_bd_net -net axil_reg32_0_led_div1_o [get_bd_pins axil_reg32_0/led_div1_o] [get_bd_ports led_div1_o_0]
   connect_bd_net -net emio_i2c0_scl_i_0_1 [get_bd_ports emio_i2c0_scl_i_0] [get_bd_pins zynq_ultra_ps_e_0/emio_i2c0_scl_i]
@@ -763,7 +765,7 @@ Port;FD4A0000;FD4AFFFF;1|FPD;DPDMA;FD4C0000;FD4CFFFF;1|FPD;DDR_XMPU5_CFG;FD05000
   connect_bd_net -net git_hash_top_0_1 [get_bd_ports git_hash_top] [get_bd_pins axil_reg32_0/git_hash_top]
   connect_bd_net -net led_cnt_vhd19_0_led_o [get_bd_pins led_cnt_vhd19_0/led_o] [get_bd_ports led_o_0]
   connect_bd_net -net proc_sys_reset_0_interconnect_aresetn [get_bd_pins proc_sys_reset_0/interconnect_aresetn] [get_bd_pins smartconnect_0/aresetn]
-  connect_bd_net -net proc_sys_reset_0_peripheral_aresetn [get_bd_pins proc_sys_reset_0/peripheral_aresetn] [get_bd_pins axil_reg32_0/S_AXI_ARESETN] [get_bd_ports periph_rstn]
+  connect_bd_net -net proc_sys_reset_0_peripheral_aresetn [get_bd_pins proc_sys_reset_0/peripheral_aresetn] [get_bd_ports periph_rstn] [get_bd_pins axil_reg32_0/S_AXI_ARESETN]
   connect_bd_net -net proc_sys_reset_0_peripheral_reset [get_bd_pins proc_sys_reset_0/peripheral_reset] [get_bd_ports rst] [get_bd_pins led_cnt_vhd19_0/rst]
   connect_bd_net -net timstamp_top_0_1 [get_bd_ports timstamp_top] [get_bd_pins axil_reg32_0/timstamp_top]
   connect_bd_net -net user_init_64b_wrappe_0_usr_access_data_o [get_bd_pins user_init_64b_wrappe_0/usr_access_data_o] [get_bd_pins axil_reg32_0/timstamp_bd]

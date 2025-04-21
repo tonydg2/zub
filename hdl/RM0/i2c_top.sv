@@ -8,6 +8,7 @@ module i2c_top (
   input       rst     ,
   output [63:0] git_hash_top,
   output [31:0] timestamp_top,
+  input  [16:0] i2c_send_data_i,
   input       scl0_i  ,
   input       scl0_t  ,
   output      scl0_o  ,
@@ -34,6 +35,8 @@ module i2c_top (
   input       S_BSCAN_bscanid_en  
 );
 
+`ifndef QUESTA
+`ifndef MODELSIM
   user_init_64b top_git_hash_inst (
     .clk      (1'b0),
     .value_o  (git_hash_top)
@@ -43,17 +46,21 @@ module i2c_top (
     .clk      (1'b0),
     .value_o  (timestamp_top)
   );
+`endif
+`endif 
 
 (* DONT_TOUCH = "TRUE", KEEP_HIERARCHY = "TRUE" *) i2c_sink i2c_sink_inst (
-    .clk    (clk    ),
-    .clk12  (clk12),
-    .rst    (rst    ),
-    .scl_i  (scl0_i ),
-    .scl_t  (scl0_t ),
-    .scl_o  (scl0_o ),
-    .sda_i  (sda0_i ),
-    .sda_o  (sda0_o ),
-    .sda_t  (sda0_t )
+    .clk            (clk                  ),
+    .clk12          (clk12                ),
+    .rst            (rst                  ),
+    .data_send_en_i (i2c_send_data_i[16]  ),
+    .data_send_i    (i2c_send_data_i[15:0]),
+    .scl_i          (scl0_i               ),
+    .scl_t          (scl0_t               ),
+    .scl_o          (scl0_o               ),
+    .sda_i          (sda0_i               ),
+    .sda_o          (sda0_o               ),
+    .sda_t          (sda0_t               )
   );
   
 //(* DONT_TOUCH = "TRUE", KEEP_HIERARCHY = "TRUE" *) i2c_sink i2c_sink_inst2 (

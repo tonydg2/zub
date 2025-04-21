@@ -12,7 +12,7 @@ module top_io (
   logic [2:0]   gpio,gpio2;
   logic i2c0_scl_i, i2c0_scl_o, i2c0_scl_t, i2c0_sda_i, i2c0_sda_o, i2c0_sda_t, i2c_int;
   logic i2c1_scl_i, i2c1_scl_o, i2c1_scl_t, i2c1_sda_i, i2c1_sda_o, i2c1_sda_t;
-
+  logic [16:0] i2c_send_data;
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
   top_bd_wrapper top_bd_wrapper_inst (
@@ -23,6 +23,7 @@ module top_io (
     .led_o_0                (led0               ),
     .git_hash_top           (git_hash_top       ),
     .timstamp_top           (timestamp_top      ),
+    .i2c_send_data_o        (i2c_send_data      ),
     .emio_i2c0_scl_i_0      (i2c0_scl_i         ), // input 
     .emio_i2c0_scl_o_0      (i2c0_scl_o         ), // output
     .emio_i2c0_scl_t_0      (i2c0_scl_t         ), // output
@@ -50,6 +51,7 @@ logic tdo;
   .rst            (rst            ),
   .git_hash_top   (git_hash_top   ),
   .timestamp_top  (timestamp_top  ),
+  .i2c_send_data_i(i2c_send_data  ),
   .scl0_i         (i2c0_scl_o     ),
   .scl0_t         (i2c0_scl_t     ),
   .scl0_o         (i2c0_scl_i     ),
@@ -134,6 +136,7 @@ module i2c_top (
   input       rst     ,
   output [63:0] git_hash_top,
   output [31:0] timestamp_top,
+  input  [16:0] i2c_send_data_i,
   input       scl0_i  ,
   input       scl0_t  ,
   output      scl0_o  ,
