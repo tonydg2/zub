@@ -44,7 +44,7 @@ logic [9:0] bscan_vec;
 logic tdo;
 
 
-// !! DONT FORGET ABOUT BLACKBOX DECLARATION BOOTOM OF FILE! WHEN CHANGING PORTS!!
+// !! DONT FORGET ABOUT BLACKBOX DECLARATION BOOTOM OF FILE! WHEN CHANGING PORTS!! (DFX ONLY)
 (* DONT_TOUCH = "TRUE", KEEP_HIERARCHY = "TRUE" *) i2c_top i2c_top_inst (
   .clk            (clk100         ),
   .clk12          (clk8),
@@ -63,19 +63,19 @@ logic tdo;
   .scl1_o         (i2c1_scl_i     ),
   .sda1_i         (i2c1_sda_o     ),
   .sda1_o         (i2c1_sda_i     ),
-  .sda1_t         (i2c1_sda_t     ),
-  .S_BSCAN_drck(),
-  .S_BSCAN_shift(),
-  .S_BSCAN_tdi(),
-  .S_BSCAN_update(),
-  .S_BSCAN_sel(),
-  .S_BSCAN_tdo(),
-  .S_BSCAN_tms(),
-  .S_BSCAN_tck(),
-  .S_BSCAN_runtest(),
-  .S_BSCAN_reset(),
-  .S_BSCAN_capture(),
-  .S_BSCAN_bscanid_en()  
+  .sda1_t         (i2c1_sda_t     )
+//  .S_BSCAN_drck(),
+//  .S_BSCAN_shift(),
+//  .S_BSCAN_tdi(),
+//  .S_BSCAN_update(),
+//  .S_BSCAN_sel(),
+//  .S_BSCAN_tdo(),
+//  .S_BSCAN_tms(),
+//  .S_BSCAN_tck(),
+//  .S_BSCAN_runtest(),
+//  .S_BSCAN_reset(),
+//  .S_BSCAN_capture(),
+//  .S_BSCAN_bscanid_en()  
 );
 
 
@@ -89,11 +89,11 @@ clk_div #(
 );
 
 //2,000,000
-ila1 ila1 (
-	.clk(clk8), // input wire clk
-	.probe0({0, i2c0_scl_i, i2c0_scl_o, i2c0_scl_t, i2c0_sda_i, i2c0_sda_o, i2c0_sda_t}  ),  // input wire [6:0]  probe0  
-	.probe1({0, i2c1_scl_i, i2c1_scl_o, i2c1_scl_t, i2c1_sda_i, i2c1_sda_o, i2c1_sda_t}  )   // input wire [6:0]  probe1
-);
+//ila1 ila1 (
+//	.clk(clk8), // input wire clk
+//	.probe0({0, i2c0_scl_i, i2c0_scl_o, i2c0_scl_t, i2c0_sda_i, i2c0_sda_o, i2c0_sda_t}  ),  // input wire [6:0]  probe0  
+//	.probe1({0, i2c1_scl_i, i2c1_scl_o, i2c1_scl_t, i2c1_sda_i, i2c1_sda_o, i2c1_sda_t}  )   // input wire [6:0]  probe1
+//);
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -129,6 +129,9 @@ ila1 ila1 (
 
 endmodule
 
+
+
+/*
 // blackbox for DFX
 module i2c_top (
   input       clk     ,
@@ -162,7 +165,7 @@ module i2c_top (
   input       S_BSCAN_capture     ,
   input       S_BSCAN_bscanid_en  
 ); endmodule
-/*
+
 module i2c_sink (
   input   clk   ,
   input   rst   ,
