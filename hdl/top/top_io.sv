@@ -196,11 +196,11 @@ gpio axi_gpio_pl (
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-ila1 ila1 (
-	.clk(clk100), // input wire clk
-	.probe0({0,i2c_int,i2c0_scl_i, i2c0_scl_o, i2c0_scl_t}  ),  // input wire [4:0]  probe0  
-	.probe1({0,0,i2c0_sda_i, i2c0_sda_o, i2c0_sda_t}  )   // input wire [4:0]  probe1
-);
+//ila1 ila1 (
+//	.clk(clk100), // input wire clk
+//	.probe0({0,i2c_int,i2c0_scl_i, i2c0_scl_o, i2c0_scl_t}  ),  // input wire [4:0]  probe0  
+//	.probe1({0,0,i2c0_sda_i, i2c0_sda_o, i2c0_sda_t}  )   // input wire [4:0]  probe1
+//);
 
 
 endmodule
