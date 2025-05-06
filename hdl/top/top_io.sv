@@ -16,8 +16,8 @@ module top_io (
     .clk100                 (clk100             ),
     .rst                    (rst                ),
     .periph_rstn            (rstn               ),
-    .led_div1_o_0           (led_div1           ),
-    .led_o_0                (led0               )
+    .led_o_0                (led0               ),
+    .led_o_1                (led1               )
   );
 
 
@@ -82,9 +82,9 @@ module top_io (
   );
 */
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-  logic [1:0] idx;
-  logic [2:0] ledsr,cnt;
-  logic ledre;
+  logic [1:0] idx,idx1;
+  logic [2:0] ledsr,cnt,ledsr1,cnt1;
+  logic ledre,ledre1;
 
   always_ff @( posedge clk100 ) begin
     if (rst) begin 
@@ -92,6 +92,10 @@ module top_io (
       ledsr <= 1;
       idx   <= 0;
       cnt   <= 0;
+      ledre1 <= 0;
+      ledsr1 <= 1;
+      idx1   <= 0;
+      cnt1   <= 0;
     end else begin 
       ledre <= led0;
       if (led0 && !ledre) begin 
@@ -99,6 +103,14 @@ module top_io (
         if (ledsr == (1 << (2)))  ledsr <= 1;
         else                      ledsr <= ledsr << 1;
       end
+
+      ledre1 <= led1;
+      if (led1 && !ledre1) begin 
+        cnt1  <= cnt1 + 1;
+        if (ledsr1 == (1 << (2))) ledsr1 <= 1;
+        else                      ledsr1 <= ledsr1 << 1;
+      end
+
     end
   end
 
@@ -106,9 +118,9 @@ module top_io (
   assign led_0[1] = cnt[1];
   assign led_0[0] = cnt[0];
 
-  assign led_1[2] = cnt[0];
-  assign led_1[1] = cnt[1];
-  assign led_1[0] = cnt[2];
+  assign led_1[2] = cnt1[2];
+  assign led_1[1] = cnt1[1];
+  assign led_1[0] = cnt1[0];
 
 
 

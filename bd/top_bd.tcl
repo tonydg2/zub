@@ -46,9 +46,16 @@ if { [string first $scripts_vivado_version $current_vivado_version] == -1 } {
 
 # The design that will be created by this Tcl script contains the following 
 # module references:
-# axil_reg32, user_init_64b_wrapper_zynq, led_cnt_vhd19
+# axil_reg32, user_init_64b_wrapper_zynq
 
 # Please add the sources of those modules before sourcing this Tcl script.
+
+
+# The design that will be created by this Tcl script contains the following 
+# block design container source references:
+# led0, led0_A, led0_B, led1, led1_A, led1_B
+
+# Please add the sources before sourcing this Tcl script.
 
 # If there is no project opened, this script will create a
 # project, but make sure you do not have an existing project
@@ -139,7 +146,6 @@ if { $bCheckIPs == 1 } {
 xilinx.com:ip:zynq_ultra_ps_e:3.5\
 xilinx.com:ip:proc_sys_reset:5.0\
 xilinx.com:ip:smartconnect:1.0\
-xilinx.com:ip:xlconstant:1.1\
 "
 
    set list_ips_missing ""
@@ -167,7 +173,6 @@ if { $bCheckModules == 1 } {
    set list_check_mods "\ 
 axil_reg32\
 user_init_64b_wrapper_zynq\
-led_cnt_vhd19\
 "
 
    set list_mods_missing ""
@@ -183,6 +188,58 @@ led_cnt_vhd19\
       catch {common::send_gid_msg -ssname BD::TCL -id 2021 -severity "ERROR" "The following module(s) are not found in the project: $list_mods_missing" }
       common::send_gid_msg -ssname BD::TCL -id 2022 -severity "INFO" "Please add source files for the missing module(s) above."
       set bCheckIPsPassed 0
+   }
+}
+
+##################################################################
+# CHECK Block Design Container Sources
+##################################################################
+set bCheckSources 1
+set list_bdc_active "led0, led1"
+set list_bdc_dfx "led0_A, led0_B, led1_A, led1_B"
+
+array set map_bdc_missing {}
+set map_bdc_missing(ACTIVE) ""
+set map_bdc_missing(DFX) ""
+set map_bdc_missing(BDC) ""
+
+if { $bCheckSources == 1 } {
+   set list_check_srcs "\ 
+led0 \
+led0_A \
+led0_B \
+led1 \
+led1_A \
+led1_B \
+"
+
+   common::send_gid_msg -ssname BD::TCL -id 2056 -severity "INFO" "Checking if the following sources for block design container exist in the project: $list_check_srcs .\n\n"
+
+   foreach src $list_check_srcs {
+      if { [can_resolve_reference $src] == 0 } {
+         if { [lsearch $list_bdc_active $src] != -1 } {
+            set map_bdc_missing(ACTIVE) "$map_bdc_missing(ACTIVE) $src"
+         } elseif { [lsearch $list_bdc_dfx $src] != -1 } {
+            set map_bdc_missing(DFX) "$map_bdc_missing(DFX) $src"
+         } else {
+            set map_bdc_missing(BDC) "$map_bdc_missing(BDC) $src"
+         }
+      }
+   }
+
+   if { [llength $map_bdc_missing(ACTIVE)] > 0 } {
+      catch {common::send_gid_msg -ssname BD::TCL -id 2057 -severity "ERROR" "The following source(s) of Active variants are not found in the project: $map_bdc_missing(ACTIVE)" }
+      common::send_gid_msg -ssname BD::TCL -id 2060 -severity "INFO" "Please add source files for the missing source(s) above."
+      set bCheckIPsPassed 0
+   }
+   if { [llength $map_bdc_missing(DFX)] > 0 } {
+      catch {common::send_gid_msg -ssname BD::TCL -id 2058 -severity "ERROR" "The following source(s) of DFX variants are not found in the project: $map_bdc_missing(DFX)" }
+      common::send_gid_msg -ssname BD::TCL -id 2060 -severity "INFO" "Please add source files for the missing source(s) above."
+      set bCheckIPsPassed 0
+   }
+   if { [llength $map_bdc_missing(BDC)] > 0 } {
+      catch {common::send_gid_msg -ssname BD::TCL -id 2059 -severity "WARNING" "The following source(s) of variants are not found in the project: $map_bdc_missing(BDC)" }
+      common::send_gid_msg -ssname BD::TCL -id 2060 -severity "INFO" "Please add source files for the missing source(s) above."
    }
 }
 
@@ -228,18 +285,24 @@ proc create_root_design { parentCell } {
   # Set parent object as current
   current_bd_instance $parentObj
 
+  set_property -dict [list \
+  SRC_RM_MAP./led0.led0 {led0_inst_0} \
+  SRC_RM_MAP./led1.led1 {led1_inst_0} \
+  SRC_RM_MAP./led0.led0_A {led0_A_inst_0} \
+  SRC_RM_MAP./led1.led1_A {led1_A_inst_0} \
+  SRC_RM_MAP./led0.led0_B {led0_B_inst_0} \
+  SRC_RM_MAP./led1.led1_B {led1_B_inst_0} \
+] [get_bd_designs $design_name]
+
 
   # Create interface ports
 
   # Create ports
   set led_o_0 [ create_bd_port -dir O led_o_0 ]
-  set led_div1_o_0 [ create_bd_port -dir O -from 4 -to 0 led_div1_o_0 ]
   set clk100 [ create_bd_port -dir O -type clk clk100 ]
-  set_property -dict [ list \
-   CONFIG.ASSOCIATED_BUSIF {} \
- ] $clk100
   set rst [ create_bd_port -dir O -from 0 -to 0 -type rst rst ]
   set periph_rstn [ create_bd_port -dir O -from 0 -to 0 -type rst periph_rstn ]
+  set led_o_1 [ create_bd_port -dir O led_o_1 ]
 
   # Create instance: zynq_ultra_ps_e_0, and set properties
   set zynq_ultra_ps_e_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:zynq_ultra_ps_e:3.5 zynq_ultra_ps_e_0 ]
@@ -718,20 +781,28 @@ Port;FD4A0000;FD4AFFFF;1|FPD;DPDMA;FD4C0000;FD4CFFFF;1|FPD;DDR_XMPU5_CFG;FD05000
      return 1
    }
   
-  # Create instance: led_cnt_vhd19_0, and set properties
-  set block_name led_cnt_vhd19
-  set block_cell_name led_cnt_vhd19_0
-  if { [catch {set led_cnt_vhd19_0 [create_bd_cell -type module -reference $block_name $block_cell_name] } errmsg] } {
-     catch {common::send_gid_msg -ssname BD::TCL -id 2095 -severity "ERROR" "Unable to add referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
-     return 1
-   } elseif { $led_cnt_vhd19_0 eq "" } {
-     catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
-     return 1
-   }
-  
-  # Create instance: xlconstant_0, and set properties
-  set xlconstant_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconstant:1.1 xlconstant_0 ]
-  set_property CONFIG.CONST_VAL {0} $xlconstant_0
+  # Create instance: led0, and set properties
+  set led0 [ create_bd_cell -type container -reference led0 led0 ]
+  set_property -dict [list \
+    CONFIG.ACTIVE_SIM_BD {led0.bd} \
+    CONFIG.ACTIVE_SYNTH_BD {led0.bd} \
+    CONFIG.ENABLE_DFX {true} \
+    CONFIG.LIST_SIM_BD {led0.bd:led0_A.bd:led0_B.bd} \
+    CONFIG.LIST_SYNTH_BD {led0.bd:led0_A.bd:led0_B.bd} \
+    CONFIG.LOCK_PROPAGATE {0} \
+  ] $led0
+
+
+  # Create instance: led1, and set properties
+  set led1 [ create_bd_cell -type container -reference led1 led1 ]
+  set_property -dict [list \
+    CONFIG.ACTIVE_SIM_BD {led1.bd} \
+    CONFIG.ACTIVE_SYNTH_BD {led1.bd} \
+    CONFIG.ENABLE_DFX {true} \
+    CONFIG.LIST_SIM_BD {led1.bd:led1_A.bd:led1_B.bd} \
+    CONFIG.LIST_SYNTH_BD {led1.bd:led1_A.bd:led1_B.bd} \
+    CONFIG.LOCK_PROPAGATE {0} \
+  ] $led1
 
 
   # Create interface connections
@@ -739,16 +810,16 @@ Port;FD4A0000;FD4AFFFF;1|FPD;DPDMA;FD4C0000;FD4CFFFF;1|FPD;DDR_XMPU5_CFG;FD05000
   connect_bd_intf_net -intf_net zynq_ultra_ps_e_0_M_AXI_HPM0_FPD [get_bd_intf_pins smartconnect_0/S00_AXI] [get_bd_intf_pins zynq_ultra_ps_e_0/M_AXI_HPM0_FPD]
 
   # Create port connections
-  connect_bd_net -net axil_reg32_0_led_div0_o [get_bd_pins axil_reg32_0/led_div0_o] [get_bd_pins led_cnt_vhd19_0/div_i]
-  connect_bd_net -net axil_reg32_0_led_div1_o [get_bd_pins axil_reg32_0/led_div1_o] [get_bd_ports led_div1_o_0]
-  connect_bd_net -net led_cnt_vhd19_0_led_o [get_bd_pins led_cnt_vhd19_0/led_o] [get_bd_ports led_o_0]
+  connect_bd_net -net axil_reg32_0_led_div0_o [get_bd_pins axil_reg32_0/led_div0_o] [get_bd_pins led0/div_i]
+  connect_bd_net -net axil_reg32_0_led_div1_o [get_bd_pins axil_reg32_0/led_div1_o] [get_bd_pins led1/div_i]
+  connect_bd_net -net led_cnt_wrapper_0_led_o [get_bd_pins led0/led_o_0] [get_bd_ports led_o_0]
+  connect_bd_net -net led_cnt_wrapper_1_0_led_o [get_bd_pins led1/led_o_1] [get_bd_ports led_o_1]
   connect_bd_net -net proc_sys_reset_0_interconnect_aresetn [get_bd_pins proc_sys_reset_0/interconnect_aresetn] [get_bd_pins smartconnect_0/aresetn]
   connect_bd_net -net proc_sys_reset_0_peripheral_aresetn [get_bd_pins proc_sys_reset_0/peripheral_aresetn] [get_bd_pins axil_reg32_0/S_AXI_ARESETN] [get_bd_ports periph_rstn]
-  connect_bd_net -net proc_sys_reset_0_peripheral_reset [get_bd_pins proc_sys_reset_0/peripheral_reset] [get_bd_ports rst] [get_bd_pins led_cnt_vhd19_0/rst]
+  connect_bd_net -net proc_sys_reset_0_peripheral_reset [get_bd_pins proc_sys_reset_0/peripheral_reset] [get_bd_ports rst] [get_bd_pins led0/rst] [get_bd_pins led1/rst]
   connect_bd_net -net user_init_64b_wrappe_0_usr_access_data_o [get_bd_pins user_init_64b_wrappe_0/usr_access_data_o] [get_bd_pins axil_reg32_0/timstamp_bd]
   connect_bd_net -net user_init_64b_wrappe_0_value_o [get_bd_pins user_init_64b_wrappe_0/value_o] [get_bd_pins axil_reg32_0/git_hash_bd]
-  connect_bd_net -net xlconstant_0_dout [get_bd_pins xlconstant_0/dout] [get_bd_pins led_cnt_vhd19_0/wren_i]
-  connect_bd_net -net zynq_ultra_ps_e_0_pl_clk0 [get_bd_pins zynq_ultra_ps_e_0/pl_clk0] [get_bd_pins zynq_ultra_ps_e_0/maxihpm0_fpd_aclk] [get_bd_pins proc_sys_reset_0/slowest_sync_clk] [get_bd_pins smartconnect_0/aclk] [get_bd_ports clk100] [get_bd_pins led_cnt_vhd19_0/clk] [get_bd_pins axil_reg32_0/S_AXI_ACLK]
+  connect_bd_net -net zynq_ultra_ps_e_0_pl_clk0 [get_bd_pins zynq_ultra_ps_e_0/pl_clk0] [get_bd_pins zynq_ultra_ps_e_0/maxihpm0_fpd_aclk] [get_bd_pins proc_sys_reset_0/slowest_sync_clk] [get_bd_pins smartconnect_0/aclk] [get_bd_ports clk100] [get_bd_pins axil_reg32_0/S_AXI_ACLK] [get_bd_pins led0/clk100] [get_bd_pins led1/clk100]
   connect_bd_net -net zynq_ultra_ps_e_0_pl_resetn0 [get_bd_pins zynq_ultra_ps_e_0/pl_resetn0] [get_bd_pins proc_sys_reset_0/ext_reset_in]
 
   # Create address segments
