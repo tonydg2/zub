@@ -17,7 +17,13 @@ module top_io (
     .rst                    (rst                ),
     .periph_rstn            (rstn               ),
     .led_div1_o_0           (led_div1           ),
-    .led_o_0                (led0               )
+    .led_o_0                (led0               ),
+    .git_hash_scripts_0     (git_hash_scripts   ),
+    .git_hash_top_0         (git_hash_top       ),
+    .git_hash_common_0      (git_hash_common    ),
+    .timstamp_scripts_0     (timestamp_scripts  ),
+    .timstamp_top_0         (timestamp_top      ),
+    .timstamp_common_0      (timestamp_common   )
   );
 
 
@@ -41,7 +47,7 @@ module top_io (
 //    .led_o    (led1     ) //BLUE
 //  );
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-/*
+
 // SCRIPTS
 //  user_init_64b git_hash_scripts_inst (
   user_init_64b scripts_git_hash_inst (
@@ -80,7 +86,7 @@ module top_io (
     .clk      (1'b0),
     .value_o  (timestamp_common)
   );
-*/
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
   logic [1:0] idx;
   logic [2:0] ledsr,cnt;
