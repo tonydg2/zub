@@ -111,6 +111,10 @@ axi_iic_0 axi_iic_0 (
   .gpo              ()               // output wire [0 : 0] gpo
 );
 */
+
+
+// A logic-High on the T pin disables the output buffer
+// When the output buffer is 3-stated (T = High), the input buffer is ON
 IOBUF IOBUF_iic_sda (
   .O  (iic_sda_i          ),  // 1-bit output: Buffer output
   .I  (iic_sda_o          ),  // 1-bit input: Buffer input
@@ -130,11 +134,11 @@ IOBUF IOBUF_iic_scl (
 logic clk12p5;
 clk_div #(.DIV(8)) clk_div_inst (.clk_i(clk100),.clk_o(clk12p5));
 
-ila1 ila1 (
-	.clk(clk12p5), // input wire clk
-	.probe0({iic_sda_i,iic_sda_o,iic_sda_t,iic_scl_i,iic_scl_o,iic_scl_t}),  // input wire [5:0]  probe0  
-	.probe1()   // input wire [5:0]  probe1
-);
+//ila1 ila1 (
+//	.clk(clk12p5), // input wire clk
+//	.probe0({iic_sda_i,iic_sda_o,iic_sda_t,iic_scl_i,iic_scl_o,iic_scl_t}),  // input wire [5:0]  probe0  
+//	.probe1()   // input wire [5:0]  probe1
+//);
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
