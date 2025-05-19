@@ -5,28 +5,28 @@ module top_io (
     inout           HD_SENSOR_I2C_SCL
 );
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-  localparam integer ADDRW = 9;
+  localparam integer ADDRW = 9; // 9 for axi iic
   localparam integer DATAW = 32;
 
-  logic   [ADDRW-1:0]     AXIL_IIC_araddr  , AXIL_reg32_araddr   ;
-  logic   [2:0]           AXIL_IIC_arprot  , AXIL_reg32_arprot   ;
-  logic                   AXIL_IIC_arready , AXIL_reg32_arready  ;
-  logic                   AXIL_IIC_arvalid , AXIL_reg32_arvalid  ;
-  logic   [ADDRW-1:0]     AXIL_IIC_awaddr  , AXIL_reg32_awaddr   ;
-  logic   [2:0]           AXIL_IIC_awprot  , AXIL_reg32_awprot   ;
-  logic                   AXIL_IIC_awready , AXIL_reg32_awready  ;
-  logic                   AXIL_IIC_awvalid , AXIL_reg32_awvalid  ;
-  logic                   AXIL_IIC_bready  , AXIL_reg32_bready   ;
-  logic   [1:0]           AXIL_IIC_bresp   , AXIL_reg32_bresp    ;
-  logic                   AXIL_IIC_bvalid  , AXIL_reg32_bvalid   ;
-  logic   [DATAW-1:0]     AXIL_IIC_rdata   , AXIL_reg32_rdata    ;
-  logic                   AXIL_IIC_rready  , AXIL_reg32_rready   ;
-  logic   [1:0]           AXIL_IIC_rresp   , AXIL_reg32_rresp    ;
-  logic                   AXIL_IIC_rvalid  , AXIL_reg32_rvalid   ;
-  logic   [DATAW-1:0]     AXIL_IIC_wdata   , AXIL_reg32_wdata    ;
-  logic                   AXIL_IIC_wready  , AXIL_reg32_wready   ;
-  logic   [(DATAW/8)-1:0] AXIL_IIC_wstrb   , AXIL_reg32_wstrb    ;
-  logic                   AXIL_IIC_wvalid  , AXIL_reg32_wvalid   ;
+  logic   [ADDRW-1:0]      AXIL_reg32_araddr   ;  //,  AXIL_IIC_araddr  ;
+  logic   [2:0]            AXIL_reg32_arprot   ;  //,  AXIL_IIC_arprot  ;
+  logic                    AXIL_reg32_arready  ;  //,  AXIL_IIC_arready ;
+  logic                    AXIL_reg32_arvalid  ;  //,  AXIL_IIC_arvalid ;
+  logic   [ADDRW-1:0]      AXIL_reg32_awaddr   ;  //,  AXIL_IIC_awaddr  ;
+  logic   [2:0]            AXIL_reg32_awprot   ;  //,  AXIL_IIC_awprot  ;
+  logic                    AXIL_reg32_awready  ;  //,  AXIL_IIC_awready ;
+  logic                    AXIL_reg32_awvalid  ;  //,  AXIL_IIC_awvalid ;
+  logic                    AXIL_reg32_bready   ;  //,  AXIL_IIC_bready  ;
+  logic   [1:0]            AXIL_reg32_bresp    ;  //,  AXIL_IIC_bresp   ;
+  logic                    AXIL_reg32_bvalid   ;  //,  AXIL_IIC_bvalid  ;
+  logic   [DATAW-1:0]      AXIL_reg32_rdata    ;  //,  AXIL_IIC_rdata   ;
+  logic                    AXIL_reg32_rready   ;  //,  AXIL_IIC_rready  ;
+  logic   [1:0]            AXIL_reg32_rresp    ;  //,  AXIL_IIC_rresp   ;
+  logic                    AXIL_reg32_rvalid   ;  //,  AXIL_IIC_rvalid  ;
+  logic   [DATAW-1:0]      AXIL_reg32_wdata    ;  //,  AXIL_IIC_wdata   ;
+  logic                    AXIL_reg32_wready   ;  //,  AXIL_IIC_wready  ;
+  logic   [(DATAW/8)-1:0]  AXIL_reg32_wstrb    ;  //,  AXIL_IIC_wstrb   ;
+  logic                    AXIL_reg32_wvalid   ;  //,  AXIL_IIC_wvalid  ;
 
 
   logic led0,led1,clk100,rst,rstn;
@@ -40,25 +40,25 @@ module top_io (
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
   top_bd_wrapper top_bd_wrapper_inst (
-    .M_AXI_iic_0_araddr     (AXIL_IIC_araddr    ),
-    .M_AXI_iic_0_arprot     (AXIL_IIC_arprot    ),
-    .M_AXI_iic_0_arready    (AXIL_IIC_arready   ),
-    .M_AXI_iic_0_arvalid    (AXIL_IIC_arvalid   ),
-    .M_AXI_iic_0_awaddr     (AXIL_IIC_awaddr    ),
-    .M_AXI_iic_0_awprot     (AXIL_IIC_awprot    ),
-    .M_AXI_iic_0_awready    (AXIL_IIC_awready   ),
-    .M_AXI_iic_0_awvalid    (AXIL_IIC_awvalid   ),
-    .M_AXI_iic_0_bready     (AXIL_IIC_bready    ),
-    .M_AXI_iic_0_bresp      (AXIL_IIC_bresp     ),
-    .M_AXI_iic_0_bvalid     (AXIL_IIC_bvalid    ),
-    .M_AXI_iic_0_rdata      (AXIL_IIC_rdata     ),
-    .M_AXI_iic_0_rready     (AXIL_IIC_rready    ),
-    .M_AXI_iic_0_rresp      (AXIL_IIC_rresp     ),
-    .M_AXI_iic_0_rvalid     (AXIL_IIC_rvalid    ),
-    .M_AXI_iic_0_wdata      (AXIL_IIC_wdata     ),
-    .M_AXI_iic_0_wready     (AXIL_IIC_wready    ),
-    .M_AXI_iic_0_wstrb      (AXIL_IIC_wstrb     ),
-    .M_AXI_iic_0_wvalid     (AXIL_IIC_wvalid    ),
+    //.M_AXI_iic_0_araddr     (AXIL_IIC_araddr    ),
+    //.M_AXI_iic_0_arprot     (AXIL_IIC_arprot    ),
+    //.M_AXI_iic_0_arready    (AXIL_IIC_arready   ),
+    //.M_AXI_iic_0_arvalid    (AXIL_IIC_arvalid   ),
+    //.M_AXI_iic_0_awaddr     (AXIL_IIC_awaddr    ),
+    //.M_AXI_iic_0_awprot     (AXIL_IIC_awprot    ),
+    //.M_AXI_iic_0_awready    (AXIL_IIC_awready   ),
+    //.M_AXI_iic_0_awvalid    (AXIL_IIC_awvalid   ),
+    //.M_AXI_iic_0_bready     (AXIL_IIC_bready    ),
+    //.M_AXI_iic_0_bresp      (AXIL_IIC_bresp     ),
+    //.M_AXI_iic_0_bvalid     (AXIL_IIC_bvalid    ),
+    //.M_AXI_iic_0_rdata      (AXIL_IIC_rdata     ),
+    //.M_AXI_iic_0_rready     (AXIL_IIC_rready    ),
+    //.M_AXI_iic_0_rresp      (AXIL_IIC_rresp     ),
+    //.M_AXI_iic_0_rvalid     (AXIL_IIC_rvalid    ),
+    //.M_AXI_iic_0_wdata      (AXIL_IIC_wdata     ),
+    //.M_AXI_iic_0_wready     (AXIL_IIC_wready    ),
+    //.M_AXI_iic_0_wstrb      (AXIL_IIC_wstrb     ),
+    //.M_AXI_iic_0_wvalid     (AXIL_IIC_wvalid    ),
 
     .M_AXI_reg32_0_araddr   (AXIL_reg32_araddr  ),
     .M_AXI_reg32_0_arprot   (AXIL_reg32_arprot  ),
@@ -82,12 +82,12 @@ module top_io (
 
     .bd_githash             (bd_githash     ),
     .bd_timestamp           (bd_timestamp   ),
-    //.sda_i_0                (iic_sda_i          ),
-    //.sda_o_0                (iic_sda_o          ),
-    //.sda_t_0                (iic_sda_t          ),
-    //.scl_i_0                (iic_scl_i          ),
-    //.scl_o_0                (iic_scl_o          ),
-    //.scl_t_0                (iic_scl_t          ),
+    .sda_i_0                (iic_sda_i          ),
+    .sda_o_0                (iic_sda_o          ),
+    .sda_t_0                (iic_sda_t          ),
+    .scl_i_0                (iic_scl_i          ),
+    .scl_o_0                (iic_scl_o          ),
+    .scl_t_0                (iic_scl_t          ),
     .clk100                 (clk100             ),
     .rst                    (rst                ),
     .periph_rstn            (rstn               ),
@@ -102,7 +102,7 @@ module top_io (
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-
+/*
 axi_iic_0 axi_iic_0 (
   .s_axi_aclk       (clk100               ),// input wire s_axi_aclk
   .s_axi_aresetn    (rstn                 ),// input wire s_axi_aresetn
@@ -132,7 +132,7 @@ axi_iic_0 axi_iic_0 (
   .scl_t            (iic_scl_t            ), // output wire scl_t
   .gpo              ()               // output wire [0 : 0] gpo
 );
-
+*/
 
 
 // A logic-High on the T pin disables the output buffer
@@ -224,40 +224,6 @@ axil_reg32 axil_reg32_inst	(
 );
 
 
-/*
-// SCRIPTS
-  user_init_64b scripts_git_hash_inst (
-    .clk      (1'b0),
-    .value_o  (git_hash_scripts)
-  );
-
-  user_init_32b scripts_timestamp_inst (
-    .clk      (1'b0),
-    .value_o  (timestamp_scripts)
-  );
-
-// TOP
-  user_init_64b top_git_hash_inst (
-    .clk      (1'b0),
-    .value_o  (git_hash_top)
-  );
-
-  user_init_32b top_timestamp_inst (
-    .clk      (1'b0),
-    .value_o  (timestamp_top)
-  );
-
-// Common
-  user_init_64b common_git_hash_inst (
-    .clk      (1'b0),
-    .value_o  (git_hash_common)
-  );
-
-  user_init_32b common_timestamp_inst (
-    .clk      (1'b0),
-    .value_o  (timestamp_common)
-  );
-*/
 ///////////////////////////////////////////////////////////////////////////////////////////////////
   logic [1:0] idx;
   logic [2:0] ledsr,cnt;
