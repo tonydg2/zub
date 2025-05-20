@@ -8,25 +8,25 @@ module top_io (
   localparam integer ADDRW = 9; // 9 for axi iic
   localparam integer DATAW = 32;
 
-  logic   [ADDRW-1:0]      AXIL_reg32_araddr   ;  //,  AXIL_IIC_araddr  ;
-  logic   [2:0]            AXIL_reg32_arprot   ;  //,  AXIL_IIC_arprot  ;
-  logic                    AXIL_reg32_arready  ;  //,  AXIL_IIC_arready ;
-  logic                    AXIL_reg32_arvalid  ;  //,  AXIL_IIC_arvalid ;
-  logic   [ADDRW-1:0]      AXIL_reg32_awaddr   ;  //,  AXIL_IIC_awaddr  ;
-  logic   [2:0]            AXIL_reg32_awprot   ;  //,  AXIL_IIC_awprot  ;
-  logic                    AXIL_reg32_awready  ;  //,  AXIL_IIC_awready ;
-  logic                    AXIL_reg32_awvalid  ;  //,  AXIL_IIC_awvalid ;
-  logic                    AXIL_reg32_bready   ;  //,  AXIL_IIC_bready  ;
-  logic   [1:0]            AXIL_reg32_bresp    ;  //,  AXIL_IIC_bresp   ;
-  logic                    AXIL_reg32_bvalid   ;  //,  AXIL_IIC_bvalid  ;
-  logic   [DATAW-1:0]      AXIL_reg32_rdata    ;  //,  AXIL_IIC_rdata   ;
-  logic                    AXIL_reg32_rready   ;  //,  AXIL_IIC_rready  ;
-  logic   [1:0]            AXIL_reg32_rresp    ;  //,  AXIL_IIC_rresp   ;
-  logic                    AXIL_reg32_rvalid   ;  //,  AXIL_IIC_rvalid  ;
-  logic   [DATAW-1:0]      AXIL_reg32_wdata    ;  //,  AXIL_IIC_wdata   ;
-  logic                    AXIL_reg32_wready   ;  //,  AXIL_IIC_wready  ;
-  logic   [(DATAW/8)-1:0]  AXIL_reg32_wstrb    ;  //,  AXIL_IIC_wstrb   ;
-  logic                    AXIL_reg32_wvalid   ;  //,  AXIL_IIC_wvalid  ;
+  logic   [ADDRW-1:0]      AXIL_reg32_araddr   ;
+  logic   [2:0]            AXIL_reg32_arprot   ;
+  logic                    AXIL_reg32_arready  ;
+  logic                    AXIL_reg32_arvalid  ;
+  logic   [ADDRW-1:0]      AXIL_reg32_awaddr   ;
+  logic   [2:0]            AXIL_reg32_awprot   ;
+  logic                    AXIL_reg32_awready  ;
+  logic                    AXIL_reg32_awvalid  ;
+  logic                    AXIL_reg32_bready   ;
+  logic   [1:0]            AXIL_reg32_bresp    ;
+  logic                    AXIL_reg32_bvalid   ;
+  logic   [DATAW-1:0]      AXIL_reg32_rdata    ;
+  logic                    AXIL_reg32_rready   ;
+  logic   [1:0]            AXIL_reg32_rresp    ;
+  logic                    AXIL_reg32_rvalid   ;
+  logic   [DATAW-1:0]      AXIL_reg32_wdata    ;
+  logic                    AXIL_reg32_wready   ;
+  logic   [(DATAW/8)-1:0]  AXIL_reg32_wstrb    ;
+  logic                    AXIL_reg32_wvalid   ;
 
 
   logic led0,led1,clk100,rst,rstn;
@@ -35,31 +35,9 @@ module top_io (
   logic [31:0]  timestamp_scripts,timestamp_top,timestamp_common,timestamp_sw, timestamp_ip, bd_timestamp;
   logic [2:0]   gpio,gpio2;
   
-  logic iic_sda_i,iic_sda_o,iic_sda_t,iic_scl_i,iic_scl_o,iic_scl_t;
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
   top_bd_wrapper top_bd_wrapper_inst (
-    //.M_AXI_iic_0_araddr     (AXIL_IIC_araddr    ),
-    //.M_AXI_iic_0_arprot     (AXIL_IIC_arprot    ),
-    //.M_AXI_iic_0_arready    (AXIL_IIC_arready   ),
-    //.M_AXI_iic_0_arvalid    (AXIL_IIC_arvalid   ),
-    //.M_AXI_iic_0_awaddr     (AXIL_IIC_awaddr    ),
-    //.M_AXI_iic_0_awprot     (AXIL_IIC_awprot    ),
-    //.M_AXI_iic_0_awready    (AXIL_IIC_awready   ),
-    //.M_AXI_iic_0_awvalid    (AXIL_IIC_awvalid   ),
-    //.M_AXI_iic_0_bready     (AXIL_IIC_bready    ),
-    //.M_AXI_iic_0_bresp      (AXIL_IIC_bresp     ),
-    //.M_AXI_iic_0_bvalid     (AXIL_IIC_bvalid    ),
-    //.M_AXI_iic_0_rdata      (AXIL_IIC_rdata     ),
-    //.M_AXI_iic_0_rready     (AXIL_IIC_rready    ),
-    //.M_AXI_iic_0_rresp      (AXIL_IIC_rresp     ),
-    //.M_AXI_iic_0_rvalid     (AXIL_IIC_rvalid    ),
-    //.M_AXI_iic_0_wdata      (AXIL_IIC_wdata     ),
-    //.M_AXI_iic_0_wready     (AXIL_IIC_wready    ),
-    //.M_AXI_iic_0_wstrb      (AXIL_IIC_wstrb     ),
-    //.M_AXI_iic_0_wvalid     (AXIL_IIC_wvalid    ),
-
     .M_AXI_reg32_0_araddr   (AXIL_reg32_araddr  ),
     .M_AXI_reg32_0_arprot   (AXIL_reg32_arprot  ),
     .M_AXI_reg32_0_arready  (AXIL_reg32_arready ),
@@ -79,77 +57,13 @@ module top_io (
     .M_AXI_reg32_0_wready   (AXIL_reg32_wready  ),
     .M_AXI_reg32_0_wstrb    (AXIL_reg32_wstrb   ),
     .M_AXI_reg32_0_wvalid   (AXIL_reg32_wvalid  ),
-
-    .bd_githash             (bd_githash     ),
-    .bd_timestamp           (bd_timestamp   ),
-    .sda_i_0                (iic_sda_i          ),
-    .sda_o_0                (iic_sda_o          ),
-    .sda_t_0                (iic_sda_t          ),
-    .scl_i_0                (iic_scl_i          ),
-    .scl_o_0                (iic_scl_o          ),
-    .scl_t_0                (iic_scl_t          ),
+    .bd_githash             (bd_githash         ),
+    .bd_timestamp           (bd_timestamp       ),
     .clk100                 (clk100             ),
     .rst                    (rst                ),
     .periph_rstn            (rstn               ),
     .led_o_0                (led0               )
-    //.git_hash_scripts_0     (git_hash_scripts   ),
-    //.git_hash_top_0         (git_hash_top       ),
-    //.git_hash_common_0      (git_hash_common    ),
-    //.timstamp_scripts_0     (timestamp_scripts  ),
-    //.timstamp_top_0         (timestamp_top      ),
-    //.timstamp_common_0      (timestamp_common   )
   );
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-/*
-axi_iic_0 axi_iic_0 (
-  .s_axi_aclk       (clk100               ),// input wire s_axi_aclk
-  .s_axi_aresetn    (rstn                 ),// input wire s_axi_aresetn
-  .iic2intc_irpt    (                     ),// output wire iic2intc_irpt
-  .s_axi_awaddr     (AXIL_IIC_awaddr      ), // input wire [8 : 0] s_axi_awaddr
-  .s_axi_awvalid    (AXIL_IIC_awvalid     ),// input wire s_axi_awvalid
-  .s_axi_awready    (AXIL_IIC_awready     ),// output wire s_axi_awready
-  .s_axi_wdata      (AXIL_IIC_wdata       ),  // input wire [31 : 0] s_axi_wdata
-  .s_axi_wstrb      (AXIL_IIC_wstrb       ),  // input wire [3 : 0] s_axi_wstrb
-  .s_axi_wvalid     (AXIL_IIC_wvalid      ), // input wire s_axi_wvalid
-  .s_axi_wready     (AXIL_IIC_wready      ), // output wire s_axi_wready
-  .s_axi_bresp      (AXIL_IIC_bresp       ),  // output wire [1 : 0] s_axi_bresp
-  .s_axi_bvalid     (AXIL_IIC_bvalid      ), // output wire s_axi_bvalid
-  .s_axi_bready     (AXIL_IIC_bready      ), // input wire s_axi_bready
-  .s_axi_araddr     (AXIL_IIC_araddr      ), // input wire [8 : 0] s_axi_araddr
-  .s_axi_arvalid    (AXIL_IIC_arvalid     ),// input wire s_axi_arvalid
-  .s_axi_arready    (AXIL_IIC_arready     ),// output wire s_axi_arready
-  .s_axi_rdata      (AXIL_IIC_rdata       ),  // output wire [31 : 0] s_axi_rdata
-  .s_axi_rresp      (AXIL_IIC_rresp       ),  // output wire [1 : 0] s_axi_rresp
-  .s_axi_rvalid     (AXIL_IIC_rvalid      ), // output wire s_axi_rvalid
-  .s_axi_rready     (AXIL_IIC_rready      ), // input wire s_axi_rready
-  .sda_i            (iic_sda_i            ), // input wire sda_i
-  .sda_o            (iic_sda_o            ), // output wire sda_o
-  .sda_t            (iic_sda_t            ), // output wire sda_t
-  .scl_i            (iic_scl_i            ), // input wire scl_i
-  .scl_o            (iic_scl_o            ), // output wire scl_o
-  .scl_t            (iic_scl_t            ), // output wire scl_t
-  .gpo              ()               // output wire [0 : 0] gpo
-);
-*/
-
-
-// A logic-High on the T pin disables the output buffer
-// When the output buffer is 3-stated (T = High), the input buffer is ON
-IOBUF IOBUF_iic_sda (
-  .O  (iic_sda_i          ),  // 1-bit output: Buffer output
-  .I  (iic_sda_o          ),  // 1-bit input: Buffer input
-  .IO (HD_SENSOR_I2C_SDA  ),  // 1-bit inout: Buffer inout (connect directly to top-level port)
-  .T  (iic_sda_t          )   // 1-bit input: 3-state enable input
-);
-
-IOBUF IOBUF_iic_scl (
-  .O  (iic_scl_i          ),  // 1-bit output: Buffer output
-  .I  (iic_scl_o          ),  // 1-bit input: Buffer input
-  .IO (HD_SENSOR_I2C_SCL  ),  // 1-bit inout: Buffer inout (connect directly to top-level port)
-  .T  (iic_scl_t          )   // 1-bit input: 3-state enable input
-);
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

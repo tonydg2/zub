@@ -140,7 +140,6 @@ xilinx.com:ip:zynq_ultra_ps_e:3.5\
 xilinx.com:ip:proc_sys_reset:5.0\
 xilinx.com:ip:smartconnect:1.0\
 xilinx.com:ip:xlconstant:1.1\
-xilinx.com:ip:axi_iic:2.1\
 "
 
    set list_ips_missing ""
@@ -254,12 +253,6 @@ proc create_root_design { parentCell } {
   set periph_rstn [ create_bd_port -dir O -from 0 -to 0 -type rst periph_rstn ]
   set bd_githash [ create_bd_port -dir O -from 63 -to 0 bd_githash ]
   set bd_timestamp [ create_bd_port -dir O -from 31 -to 0 bd_timestamp ]
-  set sda_o_0 [ create_bd_port -dir O sda_o_0 ]
-  set sda_i_0 [ create_bd_port -dir I sda_i_0 ]
-  set scl_t_0 [ create_bd_port -dir O scl_t_0 ]
-  set scl_o_0 [ create_bd_port -dir O scl_o_0 ]
-  set scl_i_0 [ create_bd_port -dir I scl_i_0 ]
-  set sda_t_0 [ create_bd_port -dir O sda_t_0 ]
 
   # Create instance: zynq_ultra_ps_e_0, and set properties
   set zynq_ultra_ps_e_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:zynq_ultra_ps_e:3.5 zynq_ultra_ps_e_0 ]
@@ -754,34 +747,23 @@ Port;FD4A0000;FD4AFFFF;1|FPD;DPDMA;FD4C0000;FD4CFFFF;1|FPD;DDR_XMPU5_CFG;FD05000
      return 1
    }
   
-  # Create instance: axi_iic_0, and set properties
-  set axi_iic_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_iic:2.1 axi_iic_0 ]
-
   # Create interface connections
   connect_bd_intf_net -intf_net pl_axil_reg32_0_M_AXI [get_bd_intf_ports M_AXI_reg32_0] [get_bd_intf_pins pl_axil_reg32_0/M_AXI]
   connect_bd_intf_net -intf_net smartconnect_0_M00_AXI [get_bd_intf_pins pl_axil_reg32_0/S_AXI] [get_bd_intf_pins smartconnect_0/M00_AXI]
-  connect_bd_intf_net -intf_net smartconnect_0_M01_AXI [get_bd_intf_pins axi_iic_0/S_AXI] [get_bd_intf_pins smartconnect_0/M01_AXI]
   connect_bd_intf_net -intf_net zynq_ultra_ps_e_0_M_AXI_HPM0_FPD [get_bd_intf_pins smartconnect_0/S00_AXI] [get_bd_intf_pins zynq_ultra_ps_e_0/M_AXI_HPM0_FPD]
 
   # Create port connections
-  connect_bd_net -net axi_iic_0_scl_o [get_bd_pins axi_iic_0/scl_o] [get_bd_ports scl_o_0]
-  connect_bd_net -net axi_iic_0_scl_t [get_bd_pins axi_iic_0/scl_t] [get_bd_ports scl_t_0]
-  connect_bd_net -net axi_iic_0_sda_o [get_bd_pins axi_iic_0/sda_o] [get_bd_ports sda_o_0]
-  connect_bd_net -net axi_iic_0_sda_t [get_bd_pins axi_iic_0/sda_t] [get_bd_ports sda_t_0]
   connect_bd_net -net led_cnt_vhd19_0_led_o [get_bd_pins led_cnt_vhd19_0/led_o] [get_bd_ports led_o_0]
-  connect_bd_net -net proc_sys_reset_0_interconnect_aresetn [get_bd_pins proc_sys_reset_0/interconnect_aresetn] [get_bd_pins smartconnect_0/aresetn] [get_bd_pins pl_axil_reg32_0/aresetn] [get_bd_pins axi_iic_0/s_axi_aresetn]
+  connect_bd_net -net proc_sys_reset_0_interconnect_aresetn [get_bd_pins proc_sys_reset_0/interconnect_aresetn] [get_bd_pins smartconnect_0/aresetn] [get_bd_pins pl_axil_reg32_0/aresetn]
   connect_bd_net -net proc_sys_reset_0_peripheral_aresetn [get_bd_pins proc_sys_reset_0/peripheral_aresetn] [get_bd_ports periph_rstn]
   connect_bd_net -net proc_sys_reset_0_peripheral_reset [get_bd_pins proc_sys_reset_0/peripheral_reset] [get_bd_ports rst] [get_bd_pins led_cnt_vhd19_0/rst]
-  connect_bd_net -net scl_i_0_1 [get_bd_ports scl_i_0] [get_bd_pins axi_iic_0/scl_i]
-  connect_bd_net -net sda_i_0_1 [get_bd_ports sda_i_0] [get_bd_pins axi_iic_0/sda_i]
   connect_bd_net -net user_init_64b_wrappe_0_usr_access_data_o [get_bd_pins user_init_64b_wrappe_0/usr_access_data_o] [get_bd_ports bd_timestamp]
   connect_bd_net -net user_init_64b_wrappe_0_value_o [get_bd_pins user_init_64b_wrappe_0/value_o] [get_bd_ports bd_githash]
   connect_bd_net -net xlconstant_0_dout [get_bd_pins xlconstant_0/dout] [get_bd_pins led_cnt_vhd19_0/wren_i]
-  connect_bd_net -net zynq_ultra_ps_e_0_pl_clk0 [get_bd_pins zynq_ultra_ps_e_0/pl_clk0] [get_bd_pins zynq_ultra_ps_e_0/maxihpm0_fpd_aclk] [get_bd_pins proc_sys_reset_0/slowest_sync_clk] [get_bd_pins smartconnect_0/aclk] [get_bd_ports clk100] [get_bd_pins led_cnt_vhd19_0/clk] [get_bd_pins pl_axil_reg32_0/aclk] [get_bd_pins axi_iic_0/s_axi_aclk]
+  connect_bd_net -net zynq_ultra_ps_e_0_pl_clk0 [get_bd_pins zynq_ultra_ps_e_0/pl_clk0] [get_bd_pins zynq_ultra_ps_e_0/maxihpm0_fpd_aclk] [get_bd_pins proc_sys_reset_0/slowest_sync_clk] [get_bd_pins smartconnect_0/aclk] [get_bd_ports clk100] [get_bd_pins led_cnt_vhd19_0/clk] [get_bd_pins pl_axil_reg32_0/aclk]
   connect_bd_net -net zynq_ultra_ps_e_0_pl_resetn0 [get_bd_pins zynq_ultra_ps_e_0/pl_resetn0] [get_bd_pins proc_sys_reset_0/ext_reset_in]
 
   # Create address segments
-  assign_bd_address -offset 0xA0010000 -range 0x00000200 -target_address_space [get_bd_addr_spaces zynq_ultra_ps_e_0/Data] [get_bd_addr_segs axi_iic_0/S_AXI/Reg] -force
   assign_bd_address -offset 0xA0000000 -range 0x00000080 -target_address_space [get_bd_addr_spaces zynq_ultra_ps_e_0/Data] [get_bd_addr_segs pl_axil_reg32_0/S_AXI/reg0] -force
 
   # Exclude Address Segments
