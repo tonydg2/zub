@@ -1,5 +1,5 @@
 
-version  2023.2 # vivado/vitis
+version  2024.2 # vivado/vitis
 
 #part xczu3eg-sbva484-1-i #U96v2
 part  xczu1cg-sbva484-1-e #ZUBoard
