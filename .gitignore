@@ -15,3 +15,5 @@ sw/work*
 /sim/*
 !/sim/*.do 
 !/sim/*.tcl 
+
+sec/**/*.bin
