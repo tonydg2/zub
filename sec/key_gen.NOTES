@@ -80,6 +80,7 @@ the_ROM_image:
 #-----------------------------------------------------------------------------------------------------------------------
 # Generating All of the AES Keys
 #-----------------------------------------------------------------------------------------------------------------------
+# will NOT overwrite existing
 
 > bootgen -p zu1cg -arch zynqmp -image key_gen.bif
 
@@ -87,6 +88,9 @@ the_ROM_image:
 # PUF Registration in Boot Header Mode
 # Using PUF in Boot Header Mode
 #-----------------------------------------------------------------------------------------------------------------------
+
+# do vitis instructions - xilskey_puf_registration
+
 the_ROM_image:
 {
   [pskfile]psk0.pem
