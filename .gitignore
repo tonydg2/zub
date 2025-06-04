@@ -16,4 +16,11 @@ sw/work*
 !/sim/*.do 
 !/sim/*.tcl 
 
-sec/**/*.bin
+#sec*/**/*.bin
+#sec*/**/*.pem 
+#sec*/**/*.nky
+# everything except .bif recursive in any sec* folder
+sec*/**
+!sec*/**/*.bif
+!sec*/**/*.NOTES
+
