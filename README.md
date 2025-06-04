@@ -4,7 +4,7 @@ Avnet ZUBoard-1CG
 # encryption / authentication
 
 ## auth only
-
+```
 the_ROM_image:
 {
   [pskfile]psk0.pem
@@ -15,7 +15,7 @@ the_ROM_image:
   [destination_cpu = a53-0, authentication = rsa, exception_level = el-3]/mnt/TDG_512/projects/7_zub/sub/sw/work_sec/helloWorld/build/helloWorld.elf
   [destination_device = pl, authentication = rsa]/mnt/TDG_512/projects/7_zub/output_products/bit/top.bit
 }
-
+```
 ### generate keys public/secure
 > bootgen -p zu1cg -arch zynqmp -generate_keys auth pem -image key_gen.bif
 
