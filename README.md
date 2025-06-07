@@ -3,7 +3,7 @@ Avnet ZUBoard-1CG
 
 # encryption / authentication
 
-## auth only
+## auth only ---------------------------------------------------------------
 * every partition must be authenticated, can't do individual
 ```
 the_ROM_image:
@@ -23,7 +23,7 @@ the_ROM_image:
 ### generate image
 > bootgen -p zu1cg -arch zynqmp -image key_gen.bif -w on -o BOOT.bin
 
-## encrypt
+## encrypt ---------------------------------------------------------------
 * must encrypt fsbl
 * start with fsbl+helloWorld
 ```
@@ -64,3 +64,5 @@ the_ROM_image:
   [destination_device = pl, authentication = rsa, encryption = aes, aeskeyfile = top.nky]/mnt/TDG_512/projects/7_zub/output_products/bit/top.bit
 }
 ```
+
+## 
