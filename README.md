@@ -83,7 +83,7 @@ the_ROM_image:
 }
 ```
 
-## Operational Key
+## Operational Key ---------------------------------------------------------------
 add opt_key 
 
 ```
@@ -107,7 +107,7 @@ the_ROM_image:
 * generate image:
 > bootgen -p zu1cg -arch zynqmp -image key_gen.bif -w on -o BOOT.bin
 
-## Key Rolling
+## Key Rolling ---------------------------------------------------------------
 add 'blocks = 1728(*)' to each encrypted partition
 
 ```
@@ -131,7 +131,7 @@ the_ROM_image:
 * generate image:
 > bootgen -p zu1cg -arch zynqmp -image key_gen.bif -w on -o BOOT.bin
 
-## PUF
+## PUF ---------------------------------------------------------------
 * see UG1209 'PUF Registration in Boot Header Mode'
 * vitis project, BSP enable xilskey and xilsecure 
 * xilskey -> import examples -> xilskey_puf_registration_example
