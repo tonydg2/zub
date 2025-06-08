@@ -83,4 +83,53 @@ the_ROM_image:
 }
 ```
 
-## 
+## Operational Key
+add opt_key 
+
+```
+the_ROM_image:
+{
+  [pskfile] psk0.pem
+  [sskfile] ssk0.pem
+  [auth_params] spk_id = 0; ppk_select = 0
+  [keysrc_encryption] bbram_red_key
+  [fsbl_config] bh_auth_enable, opt_key
+  [bootloader, authentication = rsa, encryption = aes, aeskeyfile = fsbl.nky, destination_cpu = a53-0] fsbl.elf
+  [destination_cpu = a53-0, authentication = rsa, encryption = aes, aeskeyfile = helloWorld.nky, exception_level = el-3] helloWorld.elf
+  [destination_device = pl, authentication = rsa, encryption = aes, aeskeyfile = top.nky] top.bit
+}
+```
+### generate image
+* delete old nky files
+* re-generate nky files (adds 'Key Opt' value):
+> bootgen -p zu1cg -arch zynqmp -image key_gen.bif
+* re-program BBRAM with new Key 0 as above
+* generate image:
+> bootgen -p zu1cg -arch zynqmp -image key_gen.bif -w on -o BOOT.bin
+
+## Key Rolling
+add 'blocks = 1728(*)' to each encrypted partition
+
+```
+the_ROM_image:
+{
+  [pskfile] psk0.pem
+  [sskfile] ssk0.pem
+  [auth_params] spk_id = 0; ppk_select = 0
+  [keysrc_encryption] bbram_red_key
+  [fsbl_config] bh_auth_enable, opt_key
+  [bootloader, authentication = rsa, encryption = aes, aeskeyfile = fsbl.nky, blocks = 1728(*), destination_cpu = a53-0] fsbl.elf
+  [destination_cpu = a53-0, authentication = rsa, encryption = aes, aeskeyfile = helloWorld.nky, blocks = 1728(*), exception_level = el-3] helloWorld.elf
+  [destination_device = pl, authentication = rsa, encryption = aes, aeskeyfile = top.nky, blocks = 1728(*)] top.bit
+}
+```
+### generate image
+* delete old nky files
+* re-generate nky files (adds 'Key Opt' value):
+> bootgen -p zu1cg -arch zynqmp -image key_gen.bif
+* re-program BBRAM with new Key 0 as above
+* generate image:
+> bootgen -p zu1cg -arch zynqmp -image key_gen.bif -w on -o BOOT.bin
+
+## PUF
+

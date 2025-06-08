@@ -4,8 +4,8 @@ the_ROM_image:
   [sskfile] ssk0.pem
   [auth_params] spk_id = 0; ppk_select = 0
   [keysrc_encryption] bbram_red_key
-  [fsbl_config] bh_auth_enable
-  [bootloader, authentication = rsa, encryption = aes, aeskeyfile = fsbl.nky, destination_cpu = a53-0] fsbl.elf
-  [destination_cpu = a53-0, authentication = rsa, encryption = aes, aeskeyfile = helloWorld.nky, exception_level = el-3] helloWorld.elf
-  [destination_device = pl, authentication = rsa, encryption = aes, aeskeyfile = top.nky] top.bit
+  [fsbl_config] bh_auth_enable, opt_key
+  [bootloader, authentication = rsa, encryption = aes, aeskeyfile = fsbl.nky, blocks = 1728(*), destination_cpu = a53-0] fsbl.elf
+  [destination_cpu = a53-0, authentication = rsa, encryption = aes, aeskeyfile = helloWorld.nky, blocks = 1728(*), exception_level = el-3] helloWorld.elf
+  [destination_device = pl, authentication = rsa, encryption = aes, aeskeyfile = top.nky, blocks = 1728(*)] top.bit
 }
