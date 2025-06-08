@@ -1,10 +1,11 @@
 # zub
 Avnet ZUBoard-1CG
 
-# encryption / authentication
+#### notes
+/mnt/TDG_512/projects/7_zub/sub/sw/work_sec/platform/export/platform/sw/boot/fsbl.elf
+/mnt/TDG_512/projects/7_zub/sub/sw/work_sec/helloWorld/build/helloWorld.elf
+/mnt/TDG_512/projects/7_zub/output_products/bit/top.bit
 
-## auth only ---------------------------------------------------------------
-* every partition must be authenticated, can't do individual
 ```
 the_ROM_image:
 {
@@ -15,6 +16,23 @@ the_ROM_image:
   [bootloader, authentication = rsa, destination_cpu = a53-0]/mnt/TDG_512/projects/7_zub/sub/sw/work_sec/platform/export/platform/sw/boot/fsbl.elf
   [destination_cpu = a53-0, authentication = rsa, exception_level = el-3]/mnt/TDG_512/projects/7_zub/sub/sw/work_sec/helloWorld/build/helloWorld.elf
   [destination_device = pl, authentication = rsa]/mnt/TDG_512/projects/7_zub/output_products/bit/top.bit
+}
+```
+
+# encryption / authentication
+
+## auth only ---------------------------------------------------------------
+* every partition must be authenticated, can't do individual
+```
+the_ROM_image:
+{
+  [pskfile] psk0.pem
+  [sskfile] ssk0.pem
+  [auth_params] spk_id = 0; ppk_select = 0
+  [fsbl_config] bh_auth_enable
+  [bootloader, authentication = rsa, destination_cpu = a53-0] fsbl.elf
+  [destination_cpu = a53-0, authentication = rsa, exception_level = el-3] helloWorld.elf
+  [destination_device = pl, authentication = rsa] top.bit
 }
 ```
 ### generate keys public/secure
@@ -29,14 +47,14 @@ the_ROM_image:
 ```
 the_ROM_image:
 {
-  [pskfile]psk0.pem
-  [sskfile]ssk0.pem
-  [auth_params]spk_id = 0; ppk_select = 0
-  [keysrc_encryption]bbram_red_key
-  [fsbl_config]bh_auth_enable
-  [bootloader, authentication = rsa, encryption = aes, aeskeyfile = fsbl.nky, destination_cpu = a53-0]/mnt/TDG_512/projects/7_zub/sub/sw/work_sec/platform/export/platform/sw/boot/fsbl.elf
-  [destination_cpu = a53-0, authentication = rsa, encryption = aes, aeskeyfile = helloWorld.nky, exception_level = el-3]/mnt/TDG_512/projects/7_zub/sub/sw/work_sec/helloWorld/build/helloWorld.elf
-  [destination_device = pl, authentication = rsa]/mnt/TDG_512/projects/7_zub/output_products/bit/top.bit
+  [pskfile] psk0.pem
+  [sskfile] ssk0.pem
+  [auth_params] spk_id = 0; ppk_select = 0
+  [keysrc_encryption] bbram_red_key
+  [fsbl_config] bh_auth_enable
+  [bootloader, authentication = rsa, encryption = aes, aeskeyfile = fsbl.nky, destination_cpu = a53-0] fsbl.elf
+  [destination_cpu = a53-0, authentication = rsa, encryption = aes, aeskeyfile = helloWorld.nky, exception_level = el-3] helloWorld.elf
+  [destination_device = pl, authentication = rsa] top.bit
 }
 ```
 ### generate fsbl/helloWorld keys
@@ -48,20 +66,20 @@ the_ROM_image:
 * vitis project, BSP enable xilskey and xilsecure 
 * xilskey -> import examples -> xilskey_bbramps_zynqmp_example
 * copy Key 0 from nky files to #define XSK_ZYNQMP_BBRAMPS_AES_KEY, run on board jtag or any method, this programs the BBRAM
-* copy BOOT.bin to SD and boot, if fail - NO prints on com/uart
+* copy BOOT.bin to SD and boot, if boot fails - NO prints on com/uart
 
 ### add bitsream enc:
 ```
 the_ROM_image:
 {
-  [pskfile]psk0.pem
-  [sskfile]ssk0.pem
-  [auth_params]spk_id = 0; ppk_select = 0
-  [keysrc_encryption]bbram_red_key
-  [fsbl_config]bh_auth_enable
-  [bootloader, authentication = rsa, encryption = aes, aeskeyfile = fsbl.nky, destination_cpu = a53-0]/mnt/TDG_512/projects/7_zub/sub/sw/work_sec/platform/export/platform/sw/boot/fsbl.elf
-  [destination_cpu = a53-0, authentication = rsa, encryption = aes, aeskeyfile = helloWorld.nky, exception_level = el-3]/mnt/TDG_512/projects/7_zub/sub/sw/work_sec/helloWorld/build/helloWorld.elf
-  [destination_device = pl, authentication = rsa, encryption = aes, aeskeyfile = top.nky]/mnt/TDG_512/projects/7_zub/output_products/bit/top.bit
+  [pskfile] psk0.pem
+  [sskfile] ssk0.pem
+  [auth_params] spk_id = 0; ppk_select = 0
+  [keysrc_encryption] bbram_red_key
+  [fsbl_config] bh_auth_enable
+  [bootloader, authentication = rsa, encryption = aes, aeskeyfile = fsbl.nky, destination_cpu = a53-0] fsbl.elf
+  [destination_cpu = a53-0, authentication = rsa, encryption = aes, aeskeyfile = helloWorld.nky, exception_level = el-3] helloWorld.elf
+  [destination_device = pl, authentication = rsa, encryption = aes, aeskeyfile = top.nky] top.bit
 }
 ```
 
