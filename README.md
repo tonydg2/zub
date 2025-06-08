@@ -20,7 +20,7 @@ the_ROM_image:
 ```
 
 # encryption / authentication
-
+* skip to PUF section at end to do everything. no BBRAM required
 ## auth only ---------------------------------------------------------------
 * every partition must be authenticated, can't do individual
 ```
@@ -132,4 +132,34 @@ the_ROM_image:
 > bootgen -p zu1cg -arch zynqmp -image key_gen.bif -w on -o BOOT.bin
 
 ## PUF
+* see UG1209 'PUF Registration in Boot Header Mode'
+* vitis project, BSP enable xilskey and xilsecure 
+* xilskey -> import examples -> xilskey_puf_registration_example
+* set #define XSK_PUF_INFO_ON_UART TRUE
+* verify #define XSK_PUF_PROGRAM_EFUSE is set to FALSE.
+* set Set XSK_PUF_AES_KEY to Key 0 of the nky files
+* set XSK_PUF_BLACK_KEY_IV to users choice
+* build and run the app on the board
+* Save the PUF Syndrome data that starts after 'App PUF Syndrome data Start!!!' and ends at 'PUF Syndrome data End!!!', non-inclusive, to a file named helperdata.txt.
+* Save the black key IV identified by 'App: Black Key IV' to a file named black_iv.txt
+* Save the black key to a file named black_key.txt.
 
+```
+the_ROM_image:
+{
+  [pskfile] psk0.pem
+  [sskfile] ssk0.pem
+  [auth_params] spk_id = 0; ppk_select = 0
+  [keysrc_encryption] bh_blk_key
+  [bh_key_iv] black_iv.txt
+  [bh_keyfile] black_key.txt
+  [puf_file] helperdata.txt
+  [fsbl_config] bh_auth_enable, opt_key, puf4kmode, shutter=0x0100005E, pufhd_bh
+  [bootloader, authentication = rsa, encryption = aes, aeskeyfile = fsbl.nky, blocks = 1728(*), destination_cpu = a53-0] fsbl.elf
+  [destination_cpu = a53-0, authentication = rsa, encryption = aes, aeskeyfile = helloWorld.nky, blocks = 1728(*), exception_level = el-3] helloWorld.elf
+  [destination_device = pl, authentication = rsa, encryption = aes, aeskeyfile = top.nky, blocks = 1728(*)] top.bit
+}
+```
+### generate image
+> bootgen -p zu1cg -arch zynqmp -image key_gen.bif -w on -o BOOT.bin
+* works. re-do from scratch with new keys to verify
