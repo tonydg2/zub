@@ -2,9 +2,9 @@
 Avnet ZUBoard-1CG
 
 #### notes
-/mnt/TDG_512/projects/7_zub/sub/sw/work_sec/platform/export/platform/sw/boot/fsbl.elf
-/mnt/TDG_512/projects/7_zub/sub/sw/work_sec/helloWorld/build/helloWorld.elf
-/mnt/TDG_512/projects/7_zub/output_products/bit/top.bit
+/mnt/TDG_512/projects/7_zub/sub/sw/work_sec/platform/export/platform/sw/boot/fsbl.elf  
+/mnt/TDG_512/projects/7_zub/sub/sw/work_sec/helloWorld/build/helloWorld.elf  
+/mnt/TDG_512/projects/7_zub/output_products/bit/top.bit  
 
 ```
 the_ROM_image:
