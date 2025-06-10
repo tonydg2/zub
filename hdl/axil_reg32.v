@@ -28,6 +28,7 @@
     input [63:0]  git_hash_ip,
     input [31:0]  timestamp_ip,
 
+    output [1:0]  i2c_sel,
     //output [4:0] led_div0_o,
     //output [4:0] led_div1_o,
 
@@ -721,6 +722,7 @@
 	end    
 
 	// Add user logic here
+  assign i2c_sel = slv_reg18[1:0];
   //assign led_div0_o = slv_reg30[4:0];
   //assign led_div1_o = slv_reg31[4:0];
 	// User logic ends

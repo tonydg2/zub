@@ -46,7 +46,7 @@ if { [string first $scripts_vivado_version $current_vivado_version] == -1 } {
 
 # The design that will be created by this Tcl script contains the following 
 # module references:
-# led_cnt_vhd19, axil_passthru, user_init_64b_wrapper_zynq, axil_passthru, axil_passthru
+# led_cnt_vhd19, axil_passthru, user_init_64b_wrapper_zynq
 
 # Please add the sources of those modules before sourcing this Tcl script.
 
@@ -169,8 +169,6 @@ if { $bCheckModules == 1 } {
 led_cnt_vhd19\
 axil_passthru\
 user_init_64b_wrapper_zynq\
-axil_passthru\
-axil_passthru\
 "
 
    set list_mods_missing ""
@@ -247,31 +245,19 @@ proc create_root_design { parentCell } {
 
   set M_AXI_iic_0 [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:aximm_rtl:1.0 M_AXI_iic_0 ]
   set_property -dict [ list \
-   CONFIG.ADDR_WIDTH {9} \
+   CONFIG.ADDR_WIDTH {32} \
    CONFIG.DATA_WIDTH {32} \
    CONFIG.NUM_READ_OUTSTANDING {1} \
    CONFIG.NUM_WRITE_OUTSTANDING {1} \
    CONFIG.PROTOCOL {AXI4LITE} \
    ] $M_AXI_iic_0
 
-  set M_AXI_iic_2 [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:aximm_rtl:1.0 M_AXI_iic_2 ]
-  set_property -dict [ list \
-   CONFIG.ADDR_WIDTH {9} \
-   CONFIG.DATA_WIDTH {32} \
-   CONFIG.HAS_BURST {0} \
-   CONFIG.HAS_CACHE {0} \
-   CONFIG.HAS_LOCK {0} \
-   CONFIG.HAS_QOS {0} \
-   CONFIG.HAS_REGION {0} \
-   CONFIG.PROTOCOL {AXI4LITE} \
-   ] $M_AXI_iic_2
-
 
   # Create ports
   set led_o_0 [ create_bd_port -dir O led_o_0 ]
   set clk100 [ create_bd_port -dir O -type clk clk100 ]
   set_property -dict [ list \
-   CONFIG.ASSOCIATED_BUSIF {M_AXI_reg32_0:M_AXI_iic_0:M_AXI_iic_2} \
+   CONFIG.ASSOCIATED_BUSIF {M_AXI_reg32_0:M_AXI_iic_0} \
  ] $clk100
   set rst [ create_bd_port -dir O -from 0 -to 0 -type rst rst ]
   set periph_rstn [ create_bd_port -dir O -from 0 -to 0 -type rst periph_rstn ]
@@ -740,7 +726,7 @@ Port;FD4A0000;FD4AFFFF;1|FPD;DPDMA;FD4C0000;FD4CFFFF;1|FPD;DDR_XMPU5_CFG;FD05000
   # Create instance: smartconnect_0, and set properties
   set smartconnect_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:smartconnect:1.0 smartconnect_0 ]
   set_property -dict [list \
-    CONFIG.NUM_MI {4} \
+    CONFIG.NUM_MI {3} \
     CONFIG.NUM_SI {1} \
   ] $smartconnect_0
 
@@ -786,40 +772,11 @@ Port;FD4A0000;FD4AFFFF;1|FPD;DPDMA;FD4C0000;FD4CFFFF;1|FPD;DDR_XMPU5_CFG;FD05000
   # Create instance: axi_iic_0, and set properties
   set axi_iic_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_iic:2.1 axi_iic_0 ]
 
-  # Create instance: i2c_pl, and set properties
-  set block_name axil_passthru
-  set block_cell_name i2c_pl
-  if { [catch {set i2c_pl [create_bd_cell -type module -reference $block_name $block_cell_name] } errmsg] } {
-     catch {common::send_gid_msg -ssname BD::TCL -id 2095 -severity "ERROR" "Unable to add referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
-     return 1
-   } elseif { $i2c_pl eq "" } {
-     catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
-     return 1
-   }
-    set_property CONFIG.C_S_AXI_ADDR_WIDTH {9} $i2c_pl
-
-
-  # Create instance: i2c_pl_2, and set properties
-  set block_name axil_passthru
-  set block_cell_name i2c_pl_2
-  if { [catch {set i2c_pl_2 [create_bd_cell -type module -reference $block_name $block_cell_name] } errmsg] } {
-     catch {common::send_gid_msg -ssname BD::TCL -id 2095 -severity "ERROR" "Unable to add referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
-     return 1
-   } elseif { $i2c_pl_2 eq "" } {
-     catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
-     return 1
-   }
-    set_property CONFIG.C_S_AXI_ADDR_WIDTH {9} $i2c_pl_2
-
-
   # Create interface connections
-  connect_bd_intf_net -intf_net i2c_pl_2_M_AXI [get_bd_intf_ports M_AXI_iic_2] [get_bd_intf_pins i2c_pl_2/M_AXI]
-  connect_bd_intf_net -intf_net i2c_pl_M_AXI [get_bd_intf_ports M_AXI_iic_0] [get_bd_intf_pins i2c_pl/M_AXI]
   connect_bd_intf_net -intf_net pl_axil_reg32_0_M_AXI [get_bd_intf_ports M_AXI_reg32_0] [get_bd_intf_pins pl_axil_reg32_0/M_AXI]
   connect_bd_intf_net -intf_net smartconnect_0_M00_AXI [get_bd_intf_pins pl_axil_reg32_0/S_AXI] [get_bd_intf_pins smartconnect_0/M00_AXI]
   connect_bd_intf_net -intf_net smartconnect_0_M01_AXI [get_bd_intf_pins axi_iic_0/S_AXI] [get_bd_intf_pins smartconnect_0/M01_AXI]
-  connect_bd_intf_net -intf_net smartconnect_0_M02_AXI [get_bd_intf_pins i2c_pl/S_AXI] [get_bd_intf_pins smartconnect_0/M02_AXI]
-  connect_bd_intf_net -intf_net smartconnect_0_M03_AXI [get_bd_intf_pins i2c_pl_2/S_AXI] [get_bd_intf_pins smartconnect_0/M03_AXI]
+  connect_bd_intf_net -intf_net smartconnect_0_M02_AXI [get_bd_intf_ports M_AXI_iic_0] [get_bd_intf_pins smartconnect_0/M02_AXI]
   connect_bd_intf_net -intf_net zynq_ultra_ps_e_0_M_AXI_HPM0_FPD [get_bd_intf_pins smartconnect_0/S00_AXI] [get_bd_intf_pins zynq_ultra_ps_e_0/M_AXI_HPM0_FPD]
 
   # Create port connections
@@ -836,9 +793,7 @@ Port;FD4A0000;FD4AFFFF;1|FPD;DPDMA;FD4C0000;FD4CFFFF;1|FPD;DDR_XMPU5_CFG;FD05000
   connect_bd_net -net proc_sys_reset_0_interconnect_aresetn  [get_bd_pins proc_sys_reset_0/interconnect_aresetn] \
   [get_bd_pins pl_axil_reg32_0/aresetn] \
   [get_bd_pins axi_iic_0/s_axi_aresetn] \
-  [get_bd_pins smartconnect_0/aresetn] \
-  [get_bd_pins i2c_pl/aresetn] \
-  [get_bd_pins i2c_pl_2/aresetn]
+  [get_bd_pins smartconnect_0/aresetn]
   connect_bd_net -net proc_sys_reset_0_peripheral_aresetn  [get_bd_pins proc_sys_reset_0/peripheral_aresetn] \
   [get_bd_ports periph_rstn]
   connect_bd_net -net proc_sys_reset_0_peripheral_reset  [get_bd_pins proc_sys_reset_0/peripheral_reset] \
@@ -861,21 +816,16 @@ Port;FD4A0000;FD4AFFFF;1|FPD;DPDMA;FD4C0000;FD4CFFFF;1|FPD;DDR_XMPU5_CFG;FD05000
   [get_bd_pins axi_iic_0/s_axi_aclk] \
   [get_bd_pins proc_sys_reset_0/slowest_sync_clk] \
   [get_bd_pins smartconnect_0/aclk] \
-  [get_bd_pins zynq_ultra_ps_e_0/maxihpm0_fpd_aclk] \
-  [get_bd_pins i2c_pl/aclk] \
-  [get_bd_pins i2c_pl_2/aclk]
+  [get_bd_pins zynq_ultra_ps_e_0/maxihpm0_fpd_aclk]
   connect_bd_net -net zynq_ultra_ps_e_0_pl_resetn0  [get_bd_pins zynq_ultra_ps_e_0/pl_resetn0] \
   [get_bd_pins proc_sys_reset_0/ext_reset_in]
 
   # Create address segments
+  assign_bd_address -offset 0xA0020000 -range 0x00000200 -target_address_space [get_bd_addr_spaces zynq_ultra_ps_e_0/Data] [get_bd_addr_segs M_AXI_iic_0/Reg] -force
   assign_bd_address -offset 0xA0010000 -range 0x00000200 -target_address_space [get_bd_addr_spaces zynq_ultra_ps_e_0/Data] [get_bd_addr_segs axi_iic_0/S_AXI/Reg] -force
-  assign_bd_address -offset 0xA0002000 -range 0x00000200 -target_address_space [get_bd_addr_spaces zynq_ultra_ps_e_0/Data] [get_bd_addr_segs i2c_pl_2/S_AXI/reg0] -force
-  assign_bd_address -offset 0xA0001000 -range 0x00000200 -target_address_space [get_bd_addr_spaces zynq_ultra_ps_e_0/Data] [get_bd_addr_segs i2c_pl/S_AXI/reg0] -force
   assign_bd_address -offset 0xA0000000 -range 0x00000080 -target_address_space [get_bd_addr_spaces zynq_ultra_ps_e_0/Data] [get_bd_addr_segs pl_axil_reg32_0/S_AXI/reg0] -force
 
   # Exclude Address Segments
-  exclude_bd_addr_seg -target_address_space [get_bd_addr_spaces i2c_pl/M_AXI] [get_bd_addr_segs M_AXI_iic_0/Reg]
-  exclude_bd_addr_seg -target_address_space [get_bd_addr_spaces i2c_pl_2/M_AXI] [get_bd_addr_segs M_AXI_iic_2/Reg]
   exclude_bd_addr_seg -offset 0x00000000 -range 0x00000080 -target_address_space [get_bd_addr_spaces pl_axil_reg32_0/M_AXI] [get_bd_addr_segs M_AXI_reg32_0/Reg]
 
 
