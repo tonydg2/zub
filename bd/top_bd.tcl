@@ -139,8 +139,8 @@ if { $bCheckIPs == 1 } {
 xilinx.com:ip:zynq_ultra_ps_e:3.5\
 xilinx.com:ip:proc_sys_reset:5.0\
 xilinx.com:ip:smartconnect:1.0\
-xilinx.com:ip:xlconstant:1.1\
 xilinx.com:ip:axi_iic:2.1\
+xilinx.com:inline_hdl:ilconstant:1.0\
 "
 
    set list_ips_missing ""
@@ -756,11 +756,6 @@ Port;FD4A0000;FD4AFFFF;1|FPD;DPDMA;FD4C0000;FD4CFFFF;1|FPD;DDR_XMPU5_CFG;FD05000
      return 1
    }
   
-  # Create instance: xlconstant_0, and set properties
-  set xlconstant_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconstant:1.1 xlconstant_0 ]
-  set_property CONFIG.CONST_VAL {0} $xlconstant_0
-
-
   # Create instance: pl_axil_reg32_0, and set properties
   set block_name axil_passthru
   set block_cell_name pl_axil_reg32_0
@@ -812,6 +807,11 @@ Port;FD4A0000;FD4AFFFF;1|FPD;DPDMA;FD4C0000;FD4CFFFF;1|FPD;DDR_XMPU5_CFG;FD05000
     set_property CONFIG.C_S_AXI_ADDR_WIDTH {9} $i2c_pl_2
 
 
+  # Create instance: ilconstant_0, and set properties
+  set ilconstant_0 [ create_bd_cell -type inline_hdl -vlnv xilinx.com:inline_hdl:ilconstant:1.0 ilconstant_0 ]
+  set_property CONFIG.CONST_VAL {0} $ilconstant_0
+
+
   # Create interface connections
   connect_bd_intf_net -intf_net i2c_pl_2_M_AXI [get_bd_intf_ports M_AXI_iic_2] [get_bd_intf_pins i2c_pl_2/M_AXI]
   connect_bd_intf_net -intf_net i2c_pl_M_AXI [get_bd_intf_ports M_AXI_iic_0] [get_bd_intf_pins i2c_pl/M_AXI]
@@ -831,6 +831,8 @@ Port;FD4A0000;FD4AFFFF;1|FPD;DPDMA;FD4C0000;FD4CFFFF;1|FPD;DDR_XMPU5_CFG;FD05000
   [get_bd_ports sda_o_0]
   connect_bd_net -net axi_iic_0_sda_t  [get_bd_pins axi_iic_0/sda_t] \
   [get_bd_ports sda_t_0]
+  connect_bd_net -net ilconstant_0_dout  [get_bd_pins ilconstant_0/dout] \
+  [get_bd_pins led_cnt_vhd19_0/wren_i]
   connect_bd_net -net led_cnt_vhd19_0_led_o  [get_bd_pins led_cnt_vhd19_0/led_o] \
   [get_bd_ports led_o_0]
   connect_bd_net -net proc_sys_reset_0_interconnect_aresetn  [get_bd_pins proc_sys_reset_0/interconnect_aresetn] \
@@ -852,8 +854,6 @@ Port;FD4A0000;FD4AFFFF;1|FPD;DPDMA;FD4C0000;FD4CFFFF;1|FPD;DDR_XMPU5_CFG;FD05000
   [get_bd_ports bd_timestamp]
   connect_bd_net -net user_init_64b_wrappe_0_value_o  [get_bd_pins user_init_64b_wrappe_0/value_o] \
   [get_bd_ports bd_githash]
-  connect_bd_net -net xlconstant_0_dout  [get_bd_pins xlconstant_0/dout] \
-  [get_bd_pins led_cnt_vhd19_0/wren_i]
   connect_bd_net -net zynq_ultra_ps_e_0_pl_clk0  [get_bd_pins zynq_ultra_ps_e_0/pl_clk0] \
   [get_bd_ports clk100] \
   [get_bd_pins led_cnt_vhd19_0/clk] \
