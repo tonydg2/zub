@@ -4,3 +4,9 @@
 [submodule "sub/common"]
 	path = sub/common
 	url = https://github.com/tdg2-org/common.git
+[submodule "sub/sw"]
+	path = sub/sw
+	url = https://github.com/tdg2-org/sw.git
+[submodule "sub/ip"]
+	path = sub/ip
+	url = https://github.com/tdg2-org/ip.git
