@@ -17,4 +17,8 @@ Vitis - echo server
 > ping 192.168.1.10
 
 #### Host PC, telnet
-> telnet 192.168.1.10 7
+> telnet 192.168.1.10 7  
+
+
+* xemacpsif_physpeed_ORIGINAL.c saved for comparison  
+
