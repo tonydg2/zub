@@ -18,7 +18,7 @@ n_rx_descriptors = 512
 XILTIMER_en_interval_timer  = TRUE  
 XILTIMER_tick_timer         = psu_ttc_0  
 
-* load examples  
+* load examples then revert the following lwip220 configs:
 lwip220_dhcp                      = FALSE  
 lwip220_lwip_dhcp_does_acd_check  = FALSE   
 
