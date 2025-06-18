@@ -7,18 +7,18 @@ vivado/vitis 2025.1
 ## ------------------------------------------------------------------------------------------------
 ### BSP settings
 #### lwip220  
-lwip220_dhcp                      = TRUE  
-lwip220_lwip_dhcp_does_acd_check  = TRUE   
-lwip220_pbuf_pool_size            = 16384  
-memp_n_pbuf = 1024
-mem_size = 524288
-n_rx_descriptors = 512
+lwip220_dhcp = TRUE  
+lwip220_lwip_dhcp_does_acd_check = TRUE   
+lwip220_pbuf_pool_size = 16384  
+memp_n_pbuf = 1024  
+mem_size = 524288  
+n_rx_descriptors = 512  
 
 #### xiltimer
 XILTIMER_en_interval_timer  = TRUE  
 XILTIMER_tick_timer         = psu_ttc_0  
 
-* load examples
+* load examples  
 lwip220_dhcp                      = FALSE  
 lwip220_lwip_dhcp_does_acd_check  = FALSE   
 
