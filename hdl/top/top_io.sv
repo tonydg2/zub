@@ -28,6 +28,13 @@ module top_io (
   logic   [(DATAW/8)-1:0]  AXIL_reg32_wstrb    ;
   logic                    AXIL_reg32_wvalid   ;
 
+  logic [63:0] DMA0_MM2S_0_tdata;
+  logic [7:0]  DMA0_MM2S_0_tkeep;
+  logic        DMA0_MM2S_0_tlast;
+  logic        DMA0_MM2S_0_tready;
+  logic        DMA0_MM2S_0_tvalid;
+  
+  logic dma0_mm2s_int, dma0_rstn;
 
   logic led0,led1,clk100,rst,rstn;
   logic [4:0] led_div1,p0,p1;
@@ -35,9 +42,17 @@ module top_io (
   logic [31:0]  timestamp_scripts,timestamp_top,timestamp_common,timestamp_sw, timestamp_ip, bd_timestamp;
   logic [2:0]   gpio,gpio2;
   
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+  assign DMA0_MM2S_0_tready = 1;
+
   top_bd_wrapper top_bd_wrapper_inst (
+    .M_AXIS_MM2S_0_tdata    (DMA0_MM2S_0_tdata  ),
+    .M_AXIS_MM2S_0_tkeep    (DMA0_MM2S_0_tkeep  ),
+    .M_AXIS_MM2S_0_tlast    (DMA0_MM2S_0_tlast  ),
+    .M_AXIS_MM2S_0_tready   (DMA0_MM2S_0_tready ), //in
+    .M_AXIS_MM2S_0_tvalid   (DMA0_MM2S_0_tvalid ),
     .M_AXI_reg32_0_araddr   (AXIL_reg32_araddr  ),
     .M_AXI_reg32_0_arprot   (AXIL_reg32_arprot  ),
     .M_AXI_reg32_0_arready  (AXIL_reg32_arready ),
@@ -57,6 +72,8 @@ module top_io (
     .M_AXI_reg32_0_wready   (AXIL_reg32_wready  ),
     .M_AXI_reg32_0_wstrb    (AXIL_reg32_wstrb   ),
     .M_AXI_reg32_0_wvalid   (AXIL_reg32_wvalid  ),
+    .mm2s_introut_0           (dma0_mm2s_int    ),
+    .mm2s_prmry_reset_out_n_0 (dma0_rstn        ),
     .bd_githash             (bd_githash         ),
     .bd_timestamp           (bd_timestamp       ),
     .clk100                 (clk100             ),
@@ -70,11 +87,12 @@ module top_io (
 //logic clk12p5;
 //clk_div #(.DIV(8)) clk_div_inst (.clk_i(clk100),.clk_o(clk12p5));
 
-//ila1 ila1 (
-//	.clk(clk12p5), // input wire clk
-//	.probe0({iic_sda_i,iic_sda_o,iic_sda_t,iic_scl_i,iic_scl_o,iic_scl_t}),  // input wire [5:0]  probe0  
-//	.probe1()   // input wire [5:0]  probe1
-//);
+ila1 ila1_inst (
+	.clk    (clk100), // input wire clk
+	.probe0 (DMA0_MM2S_0_tdata),
+	.probe1 (DMA0_MM2S_0_tkeep),
+	.probe2 ({DMA0_MM2S_0_tlast,DMA0_MM2S_0_tready,DMA0_MM2S_0_tvalid,dma0_mm2s_int,dma0_rstn})
+);
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
