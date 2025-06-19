@@ -41,7 +41,7 @@ lwip220_lwip_dhcp_does_acd_check  = FALSE
 
 #### Host PC, telnet
 > telnet 192.168.1.10 7  
-* ctrl + ] to exit, then 'quit'
+* 'ctrl + ]' to exit, then 'quit'
 
 * xemacpsif_physpeed_ORIGINAL.c saved for comparison  
 
@@ -55,6 +55,15 @@ lwip220_lwip_dhcp_does_acd_check  = FALSE
 > sudo ip addr add 192.168.1.100/24 dev enxd03745fbd50e
 > ip route get 192.168.1.10
 > iperf -c 192.168.1.10 -i 1 -t 10 -u -b 100M
+> iperf -c 192.168.1.10 -i 5 -t 10 -u -b 100M
 
 ## ------------------------------------------------------------------------------------------------
-python scripts not needed/used. iperf command sufficient  
+### jumbo frames src: 'udp_print_rx_frame'
+#### lwip220  
+lwip220_ip_frag_max_mtu = <greater than 1500>  
+lwip220_temac_use_jumbo_frames = TRUE  
+
+#### host pc - see ../sub/sw/py/udp_send.py
+> ip link show enxd03745fbd50e
+* host set jumbo (standard non-jumbo mtu is 1500)
+> sudo ip link set enxd03745fbd50e mtu 9000
