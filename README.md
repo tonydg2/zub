@@ -10,9 +10,14 @@ vivado/vitis 2025.1
 lwip220_dhcp = TRUE  
 lwip220_lwip_dhcp_does_acd_check = TRUE   
 lwip220_pbuf_pool_size = 16384  
-memp_n_pbuf = 1024  
-mem_size = 524288  
-n_rx_descriptors = 512  
+lwip220_memp_n_pbuf = 1024  
+lwip220_mem_size = 524288  
+lwip220_n_rx_descriptors = 512  
+### jumbo frames src: 'udp_print_rx_frame'
+#### lwip220  
+lwip220_ip_frag_max_mtu = <greater than 1500>  
+lwip220_temac_use_jumbo_frames = TRUE  
+* verify lwipopts.h : #define USE_JUMBO_FRAMES 1
 
 #### xiltimer
 XILTIMER_en_interval_timer  = TRUE  
@@ -62,6 +67,7 @@ lwip220_lwip_dhcp_does_acd_check  = FALSE
 #### lwip220  
 lwip220_ip_frag_max_mtu = <greater than 1500>  
 lwip220_temac_use_jumbo_frames = TRUE  
+* verify lwipopts.h : #define USE_JUMBO_FRAMES 1
 
 #### host pc - see ../sub/sw/py/udp_send.py
 > ip link show enxd03745fbd50e
