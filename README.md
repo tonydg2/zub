@@ -3,16 +3,17 @@ Avnet ZUBoard-1CG
 vivado/vitis 2025.1
 
 ## GEM
+* ZUBoard PHY - need xemacpsif_physpeed.c copied into platform.
 
 ## ------------------------------------------------------------------------------------------------
 ### BSP settings
-#### lwip220  
-lwip220_dhcp = TRUE  
-lwip220_lwip_dhcp_does_acd_check = TRUE   
-lwip220_pbuf_pool_size = 16384  (*not sure why xilinx says this, 256 works fine)
+#### lwip220   (lwipopts.h)
+~lwip220_dhcp = TRUE  
+~lwip220_lwip_dhcp_does_acd_check = TRUE   
+~lwip220_pbuf_pool_size = 16384  (*not sure why xilinx says this, 256 works fine)
 lwip220_memp_n_pbuf = 1024  
 lwip220_mem_size = 524288  
-lwip220_n_rx_descriptors = 512  (might not need this high, 128 or 64?)
+~lwip220_n_rx_descriptors = 512  (might not need this high, 128 or 64?)
 
 ### jumbo frames src: 'udp_print_rx_frame' 
 * max 8968 bytes (1121 64-bit words), couldn't get higher...
@@ -23,7 +24,7 @@ lwip220_temac_use_jumbo_frames = TRUE
 lwip220_pbuf_pool_bufsize 9700
 
 
-#### xiltimer
+#### xiltimer (xiltimer_config.h)
 XILTIMER_en_interval_timer  = TRUE  
 XILTIMER_tick_timer         = psu_ttc_0  
 
