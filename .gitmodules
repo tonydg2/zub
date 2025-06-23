@@ -10,3 +10,6 @@
 [submodule "sub/ip"]
 	path = sub/ip
 	url = https://github.com/tdg2-org/ip.git
+[submodule "sub/msk_modem"]
+	path = sub/msk_modem
+	url = https://github.com/tdg2-org/msk_modem.git
