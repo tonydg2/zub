@@ -1,6 +1,6 @@
 rm -rf work
 
-do files0.do
+do files1.do
 
 restart
 
