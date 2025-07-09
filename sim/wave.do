@@ -1,5 +1,8 @@
 onerror {resume}
 quietly WaveActivateNextPane {} 0
+add wave -noupdate /polyphase_interp_tb/data_OLD
+add wave -noupdate /polyphase_interp_tb/data_NEW
+add wave -noupdate /polyphase_interp_tb/data_OVERSAMP
 add wave -noupdate -group demod_mdl_good /polyphase_interp_tb/shifter_viewer_OVERSAMP/srh0
 add wave -noupdate -group demod_mdl_good /polyphase_interp_tb/shifter_viewer_OVERSAMP/srh1
 add wave -noupdate -group demod_mdl_good /polyphase_interp_tb/shifter_viewer_OVERSAMP/srh2
@@ -21,12 +24,12 @@ add wave -noupdate /polyphase_interp_tb/polyphase_interp_NEW/i_raw_i
 add wave -noupdate /polyphase_interp_tb/i_fir_NEW
 add wave -noupdate /polyphase_interp_tb/polyphase_interp_NEW/idelay
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {5687500 ps} 0}
+WaveRestoreCursors {{Cursor 1} {3372500 ps} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 255
 configure wave -valuecolwidth 311
 configure wave -justifyvalue left
-configure wave -signalnamewidth 2
+configure wave -signalnamewidth 1
 configure wave -snapdistance 10
 configure wave -datasetprefix 0
 configure wave -rowmargin 4
@@ -37,4 +40,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ns
 update
-WaveRestoreZoom {0 ps} {2500 ns}
+WaveRestoreZoom {0 ps} {42 us}
