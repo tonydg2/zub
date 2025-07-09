@@ -24,6 +24,9 @@ if {[file exists wave.do]} {do wave.do}
 #
 # parse for wave*.do files, load into unique wave windows
 # use 'view wave -new -title <wave_name>' to add new window
+#
+# > view wave -new -title wave_NAME
+#
 # Note: questa underlying wave window titles are formatted wave,wave1,wave2...etc.
 #   avoid these names in do files, use '_1' or anything else instead, prevents issues
 #   with the catch command below checking for existing wave windows
