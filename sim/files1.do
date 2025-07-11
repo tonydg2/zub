@@ -5,12 +5,12 @@
 set mskDir ../sub/msk_modem/hdl
 set mskFiles { \
   mdl/lpf_fixed_mdl.sv \
-  mdl/polyphase_interp_mdl2.sv \
+  mdl/polyphase_interp_mdl.sv \
   mdl/ddc_lpf_mdl.sv \
-  mdl/gardner_ted_mdl_3.sv \
-  mdl/loop_filter_mdl_3.sv \
+  mdl/gardner_ted_mdl.sv \
+  mdl/loop_filter_mdl.sv \
   mdl/phase_accum_mdl.sv \
-  mdl/msk_slicer_dec_mdl2.sv \
+  mdl/msk_slicer_dec_mdl.sv \
   mdl/msk_demod_mdl.sv \
 }  
 
@@ -36,5 +36,5 @@ foreach x $comFiles {
 #--------------------------------------------------------------------------------------------------
 # tb
 #--------------------------------------------------------------------------------------------------
-vlog $mskDir/tb/polyphase_interp_tb.sv   -sv -work work
+vlog $mskDir/tb/msk_tb_mdl_RX.sv   -sv -work work
 

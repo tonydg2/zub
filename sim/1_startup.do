@@ -4,7 +4,7 @@ rm -rf work
 
 do files1.do
 
-vsim  -vopt work.polyphase_interp_tb -voptargs=+acc -t ps
+vsim  -vopt work.msk_tb_mdl_RX -voptargs=+acc -t ps
 
 # ns, ps, fs resolution
 #vsim  -vopt work.msk_tb -voptargs=+acc -t ns

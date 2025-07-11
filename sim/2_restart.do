@@ -6,5 +6,5 @@ restart
 
 log -r *
 
-run 40us
+run 10us
 
