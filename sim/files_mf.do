@@ -1,18 +1,10 @@
-set tbFile msk_tb_mdl_RX
+set tbFile mf_tb
 
 #--------------------------------------------------------------------------------------------------
 # msk
 #--------------------------------------------------------------------------------------------------
 set mskDir ../sub/msk_modem/hdl
 set mskFiles { \
-  mdl/lpf_fixed_mdl.sv \
-  mdl/polyphase_interp_mdl.sv \
-  mdl/ddc_lpf_mdl.sv \
-  mdl/gardner_ted_mdl.sv \
-  mdl/loop_filter_mdl.sv \
-  mdl/phase_accum_mdl.sv \
-  mdl/msk_slicer_dec_mdl.sv \
-  mdl/msk_demod_mdl.sv \
   mdl/mf_taps_pkg.sv \
   mdl/rrc_mf_mdl.sv \
   mdl/rrc_mf_mdl_0.sv \

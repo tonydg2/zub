@@ -2,7 +2,7 @@ if {![file exists modelsim.ini]} {vmap -c }
 
 rm -rf work
 
-do files1.do
+do files_mf.do
 
 vsim  -vopt work.$tbFile -voptargs=+acc -t ps
 
