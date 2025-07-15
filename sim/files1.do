@@ -16,6 +16,7 @@ set mskFiles { \
   mdl/mf_taps_pkg.sv \
   mdl/rrc_mf_mdl.sv \
   mdl/rrc_mf_mdl_0.sv \
+  mdl/msk_mf.sv \
 }  
 
 foreach x $mskFiles {
