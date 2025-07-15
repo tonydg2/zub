@@ -6,6 +6,7 @@ set tbFile mf_tb
 set mskDir ../sub/msk_modem/hdl
 set mskFiles { \
   mdl/mf_taps_pkg.sv \
+  mdl/rrc_mf_taps_pkg.sv \
   mdl/rrc_mf_mdl.sv \
   mdl/rrc_mf_mdl_0.sv \
   mdl/msk_mf0.sv \
