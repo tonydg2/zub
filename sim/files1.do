@@ -16,6 +16,7 @@ set mskFiles { \
   mdl/mf_taps_pkg.sv \
   mdl/msk_mf.sv \
   mdl/coarse_cfo_mdl.sv \
+  mdl/derotator_mdl.sv \
 }  
 
 foreach x $mskFiles {
