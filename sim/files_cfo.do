@@ -1,21 +1,12 @@
-set tbFile msk_tb_mdl_RX
+set tbFile    coarse_cfo_tb
 
 #--------------------------------------------------------------------------------------------------
 # msk
 #--------------------------------------------------------------------------------------------------
 set mskDir ../sub/msk_modem/hdl
 set mskFiles { \
-  mdl/lpf_fixed_mdl.sv \
-  mdl/polyphase_interp_mdl.sv \
-  mdl/ddc_lpf_mdl.sv \
-  mdl/gardner_ted_mdl.sv \
-  mdl/loop_filter_mdl.sv \
-  mdl/phase_accum_mdl.sv \
-  mdl/msk_slicer_dec_mdl.sv \
-  mdl/msk_demod_mdl.sv \
-  mdl/mf_taps_pkg.sv \
-  mdl/msk_mf.sv \
   mdl/coarse_cfo_mdl.sv \
+  mdl/cfo_test.sv \
 }  
 
 foreach x $mskFiles {

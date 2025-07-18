@@ -5,11 +5,11 @@ add wave -noupdate -expand -group ted -format Analog-Step -height 50 -max 18000.
 add wave -noupdate -expand -group ted -format Analog-Step -height 50 -max 18000.0 -min -18000.0 -radix decimal /msk_tb_mdl_RX/gardner_ted_inst/q_in
 add wave -noupdate -expand -group ted /msk_tb_mdl_RX/gardner_ted_inst/iq_val
 add wave -noupdate -expand -group ted /msk_tb_mdl_RX/gardner_ted_inst/sym_valid_i
-add wave -noupdate -expand -group ted -format Analog-Step -height 84 -max 145.99999999999997 -min -288.0 -radix decimal /msk_tb_mdl_RX/gardner_ted_inst/e_out_o
+add wave -noupdate -expand -group ted -color Salmon -format Analog-Step -height 40 -max 200.0 -min -200.0 -radix decimal /msk_tb_mdl_RX/gardner_ted_inst/e_out_o
 add wave -noupdate -expand -group ted /msk_tb_mdl_RX/gardner_ted_inst/e_valid_o
 add wave -noupdate -expand -group loop /msk_tb_mdl_RX/pi_loop_filter_inst/e_in_i
 add wave -noupdate -expand -group loop /msk_tb_mdl_RX/pi_loop_filter_inst/e_valid_i
-add wave -noupdate -expand -group loop /msk_tb_mdl_RX/pi_loop_filter_inst/ctrl_o
+add wave -noupdate -expand -group loop -color Salmon -format Analog-Step -height 40 -max 5.0 -min -5.0 -radix decimal /msk_tb_mdl_RX/pi_loop_filter_inst/ctrl_o
 add wave -noupdate -expand -group loop /msk_tb_mdl_RX/pi_loop_filter_inst/ctrl_val_o
 add wave -noupdate -expand -group phase /msk_tb_mdl_RX/phase_accum_inst/ctrl_i
 add wave -noupdate -expand -group phase /msk_tb_mdl_RX/phase_accum_inst/ctrl_val_i
@@ -29,7 +29,7 @@ add wave -noupdate -expand -group poly /msk_tb_mdl_RX/polyphase_interp_NEW/i_sym
 add wave -noupdate -expand -group poly /msk_tb_mdl_RX/polyphase_interp_NEW/q_sym_o
 add wave -noupdate -expand -group poly /msk_tb_mdl_RX/polyphase_interp_NEW/sym_valid_o
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {48032500 ps} 0}
+WaveRestoreCursors {{Cursor 1} {176127500 ps} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 209
 configure wave -valuecolwidth 100
@@ -45,4 +45,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ns
 update
-WaveRestoreZoom {35334819 ps} {145508694 ps}
+WaveRestoreZoom {0 ps} {2107604625 ps}

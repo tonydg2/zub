@@ -1,10 +1,10 @@
 rm -rf work
 
-do files1.do
+do files_cfo.do
 
 restart
 
 log -r *
 
-run 1665us
+run 100us
 
