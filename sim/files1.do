@@ -17,6 +17,9 @@ set mskFiles { \
   mdl/msk_mf.sv \
   mdl/coarse_cfo_mdl.sv \
   mdl/derotator_mdl.sv \
+  mdl/phase_detector_mdl.sv \
+  mdl/loop_filter_cfo_mdl.sv \
+  mdl/nco_dds_mdl.sv \
 }  
 
 foreach x $mskFiles {
