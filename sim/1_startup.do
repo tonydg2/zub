@@ -31,8 +31,9 @@ if {[file exists wave.do]} {do wave.do}
 #   avoid these names in do files, use '_1' or anything else instead, prevents issues
 #   with the catch command below checking for existing wave windows
 #--------------------------------------------------------------------------------------------------
+set waveName "wave"
 
-set waveFiles [glob -nocomplain wave*.do]
+set waveFiles [glob -nocomplain $waveName*.do]
 
 # Remove default wave.do, already loaded above
 set filteredWaveFiles [lsearch -exact -all $waveFiles wave.do]
