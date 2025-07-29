@@ -87,12 +87,12 @@ module top_io (
 //logic clk12p5;
 //clk_div #(.DIV(8)) clk_div_inst (.clk_i(clk100),.clk_o(clk12p5));
 
-ila1 ila1_inst (
-	.clk    (clk100), // input wire clk
-	.probe0 (DMA0_MM2S_0_tdata),
-	.probe1 (DMA0_MM2S_0_tkeep),
-	.probe2 ({DMA0_MM2S_0_tlast,DMA0_MM2S_0_tready,DMA0_MM2S_0_tvalid,dma0_mm2s_int,dma0_rstn})
-);
+//ila1 ila1_inst (
+//	.clk    (clk100), // input wire clk
+//	.probe0 (DMA0_MM2S_0_tdata),
+//	.probe1 (DMA0_MM2S_0_tkeep),
+//	.probe2 ({DMA0_MM2S_0_tlast,DMA0_MM2S_0_tready,DMA0_MM2S_0_tvalid,dma0_mm2s_int,dma0_rstn})
+//);
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -186,7 +186,30 @@ axil_reg32 axil_reg32_inst	(
   assign led_1[0] = cnt[2];
 
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
+(* dont_touch = "true" *) msk_top msk_top(
+  .clk        (clk100 ),
+  .rst        (rst    ),
+  .data_o     (msk_data     ),
+  .data_val_o (msk_data_val )
+);
+
+
+  localparam shifterWid = 128;
+  localparam int FDW = 256;
+  localparam logic [FDW-1:0] FIXED_DATA = 'h901000000033000000FFFFFFFF010000007700ffff00000001010000ffa50ffe;
+
+(* dont_touch = "true" *) shifter_viewer # (
+    .FDW(FDW),
+    .FIXED_DATA(FIXED_DATA),
+    .WIDTH(shifterWid)
+  ) shifter_viewer_SYN (
+    .clk        (clk),
+    .rst        (!rst),
+    .data_i     (msk_data     ),
+    .data_val_i (msk_data_val )
+  );
 
 
 endmodule
