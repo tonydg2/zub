@@ -195,7 +195,7 @@ axil_reg32 axil_reg32_inst	(
   .data_val_o (msk_data_val )
 );
 
-
+/*
   localparam shifterWid = 128;
   localparam int FDW = 256;
   localparam logic [FDW-1:0] FIXED_DATA = 'h901000000033000000FFFFFFFF010000007700ffff00000001010000ffa50ffe;
@@ -210,6 +210,6 @@ axil_reg32 axil_reg32_inst	(
     .data_i     (msk_data     ),
     .data_val_i (msk_data_val )
   );
-
+*/
 
 endmodule
