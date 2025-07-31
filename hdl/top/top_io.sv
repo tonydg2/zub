@@ -87,12 +87,12 @@ module top_io (
 //logic clk12p5;
 //clk_div #(.DIV(8)) clk_div_inst (.clk_i(clk100),.clk_o(clk12p5));
 
-//ila1 ila1_inst (
-//	.clk    (clk100), // input wire clk
-//	.probe0 (DMA0_MM2S_0_tdata),
-//	.probe1 (DMA0_MM2S_0_tkeep),
-//	.probe2 ({DMA0_MM2S_0_tlast,DMA0_MM2S_0_tready,DMA0_MM2S_0_tvalid,dma0_mm2s_int,dma0_rstn})
-//);
+ila1 ila1_inst (
+	.clk    (clk100), // input wire clk
+	.probe0 (DMA0_MM2S_0_tdata),
+	.probe1 (DMA0_MM2S_0_tkeep),
+	.probe2 ({DMA0_MM2S_0_tlast,DMA0_MM2S_0_tready,DMA0_MM2S_0_tvalid,dma0_mm2s_int,dma0_rstn})
+);
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

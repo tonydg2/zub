@@ -5,6 +5,42 @@ vivado/vitis 2025.1
 ## GEM
 * ZUBoard PHY - need xemacpsif_physpeed.c copied into platform.
 
+
+## ------------------------------------------------------------------------------------------------
+### LATEST: instructions for host UDP jumbo frames -> DMA to PL
+enable lwip220 in BSP
+in lwip220 library config:
+  lwip220_memp_n_pbuf = 1024  
+  lwip220_mem_size = 524288  
+  lwip220_ip_frag_max_mtu = 9700
+  lwip220_temac_use_jumbo_frames = TRUE
+  lwip220_pbuf_pool_bufsize = 9700
+in xiltimer lib config:
+  XILTIMER_en_interval_timer  = TRUE  
+  XILTIMER_tick_timer         = psu_ttc_0  
+
+copy contents of:
+  /sub/sw/src/zub/eth/lwip220_vitis2025.1/xemacpsif_physpeed.c
+  
+  to:
+  platform/psu_cortexa53_0/standalone_psu_cortexa53_0/bsp/libsrc/lwip220/src/lwip-2.2.0/contrib/ports/xilinx/netif/xemacpsif_physpeed.c
+
+app:
+  /sub/sw/src/zub/eth/lwip220_vitis2025.1/udp_dma_stripped/
+
+host python UDP frame send:
+  /sub/sw/py/udp_send_multiple.py
+
+  > sudo ip addr add 192.168.1.100/24 dev enxd03745fbd50e
+  > ip route get 192.168.1.10
+  > py ../sub/sw/py/udp_send.py
+  > ip link show enxd03745fbd50e
+  host set jumbo:
+  > sudo ip link set enxd03745fbd50e mtu 9000
+
+
+## ------------------------------------------------------------------------------------------------
+### Older notes below
 ## ------------------------------------------------------------------------------------------------
 ### BSP settings
 #### lwip220   (lwipopts.h)
@@ -78,3 +114,5 @@ lwip220_temac_use_jumbo_frames = TRUE
 > ip link show enxd03745fbd50e
 * host set jumbo (standard non-jumbo mtu is 1500)
 > sudo ip link set enxd03745fbd50e mtu 9000
+
+
