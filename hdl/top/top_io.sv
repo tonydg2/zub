@@ -188,12 +188,20 @@ axil_reg32 axil_reg32_inst	(
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-(* dont_touch = "true" *) msk_top msk_top(
+(* dont_touch = "true" *) RM_msk RM_msk_inst(
   .clk        (clk100 ),
   .rst        (rst    ),
   .data_o     (msk_data     ),
   .data_val_o (msk_data_val )
 );
+
+//(* dont_touch = "true" *) msk_top msk_top2(
+//  .clk        (clk100 ),
+//  .rst        (rst    ),
+//  .data_o     (),
+//  .data_val_o ()
+//);
+
 
 /*
   localparam shifterWid = 128;

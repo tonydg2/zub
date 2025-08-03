@@ -27,6 +27,8 @@
     input [31:0]  timestamp_sw,
     input [63:0]  git_hash_ip,
     input [31:0]  timestamp_ip,
+    input [63:0]  git_hash_msk,
+    input [31:0]  timestamp_msk,
 
     //output [4:0] led_div0_o,
     //output [4:0] led_div1_o,
@@ -683,9 +685,9 @@
 	        5'h0F   : reg_data_out <= git_hash_ip[31: 0];       // 0x3C
 	        5'h10   : reg_data_out <= git_hash_ip[63:32];       // 0x40
 	        5'h11   : reg_data_out <= timestamp_ip;              // 0x44
-	        5'h12   : reg_data_out <= slv_reg18;// 0x48
-	        5'h13   : reg_data_out <= slv_reg19;// 0x4C
-	        5'h14   : reg_data_out <= slv_reg20;// 0x50
+	        5'h12   : reg_data_out <= git_hash_msk[31: 0];      // 0x48
+	        5'h13   : reg_data_out <= git_hash_msk[63:32];      // 0x4C
+	        5'h14   : reg_data_out <= timestamp_msk;            // 0x50
 	        5'h15   : reg_data_out <= slv_reg21;// 0x54
 	        5'h16   : reg_data_out <= slv_reg22;// 0x58
 	        5'h17   : reg_data_out <= slv_reg23;// 0x5C
