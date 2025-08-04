@@ -15,6 +15,7 @@
 	)
 	(
 		// Users to add ports here
+    output        dfx_decouple,
     input [63:0]  git_hash_top,
     input [31:0]  timestamp_top,
     input [63:0]  git_hash_bd,
@@ -725,6 +726,7 @@
 	// Add user logic here
   //assign led_div0_o = slv_reg30[4:0];
   //assign led_div1_o = slv_reg31[4:0];
+  assign dfx_decouple = slv_reg31[0];
 	// User logic ends
 
 	endmodule

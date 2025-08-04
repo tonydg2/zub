@@ -1,10 +1,15 @@
 module msk_top (
-  input   clk,
-  input   rst,
-  output  data_o,
-  output  data_val_o
+  input         clk           ,
+  input         rst           ,
+  output        data_o        ,
+  output        data_val_o    ,
+  input         axis_tvalid   ,
+  output        axis_tready   ,
+  input  [63:0] axis_tdata    , 
+  input         axis_tlast    , 
+  input  [7:0]  axis_tkeep   
 );
-
+  assign axis_tready = '1;
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
   localparam IQW = 16;

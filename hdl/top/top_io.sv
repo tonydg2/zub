@@ -28,11 +28,11 @@ module top_io (
   logic   [(DATAW/8)-1:0]  AXIL_reg32_wstrb    ;
   logic                    AXIL_reg32_wvalid   ;
 
-  logic [63:0] DMA0_MM2S_0_tdata;
-  logic [7:0]  DMA0_MM2S_0_tkeep;
-  logic        DMA0_MM2S_0_tlast;
-  logic        DMA0_MM2S_0_tready;
-  logic        DMA0_MM2S_0_tvalid;
+  logic [63:0] DMA0_MM2S_0_tdata , axis_msk_tdata   ;
+  logic [7:0]  DMA0_MM2S_0_tkeep , axis_msk_tkeep   ;
+  logic        DMA0_MM2S_0_tlast , axis_msk_tlast   ;
+  logic        DMA0_MM2S_0_tready, axis_msk_tready  ;
+  logic        DMA0_MM2S_0_tvalid, axis_msk_tvalid  ;
   
   logic dma0_mm2s_int, dma0_rstn;
 
@@ -45,7 +45,7 @@ module top_io (
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-  assign DMA0_MM2S_0_tready = 1;
+  //assign DMA0_MM2S_0_tready = 1;
 
   top_bd_wrapper top_bd_wrapper_inst (
     .M_AXIS_MM2S_0_tdata    (DMA0_MM2S_0_tdata  ),
@@ -82,6 +82,21 @@ module top_io (
     .led_o_0                (led0               )
   );
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+  ICAPE3 #(
+    .DEVICE_ID          (32'h03628093), // Specifies the pre-programmed Device ID value to be used for simulation purposes.
+    .ICAP_AUTO_SWITCH   ("DISABLE"), // Enable switch ICAP using sync word.
+    .SIM_CFG_FILE_NAME  ("NONE") // Specifies the Raw Bitstream (RBT) file to be parsed by the simulation model.
+  ) ICAPE3_inst (
+    .AVAIL    (),         // 1-bit output: Availability status of ICAP.
+    .O        (),         // 32-bit output: Configuration data output bus.
+    .PRDONE   (prdone),   // 1-bit output: Indicates completion of Partial Reconfiguration.
+    .PRERROR  (prerror),  // 1-bit output: Indicates error during Partial Reconfiguration.
+    .CLK      (clk),      // 1-bit input: Clock input.
+    .CSIB     (1),        // 1-bit input: Active-Low ICAP enable.
+    .I        (0),        // 32-bit input: Configuration data input bus.
+    .RDWRB    (0)         // 1-bit input: Read/Write Select input.
+  );
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 logic clk12p5;
@@ -90,8 +105,8 @@ clk_div #(.DIV(8)) clk_div_inst (.clk_i(clk100),.clk_o(clk12p5));
 ila1 ila1_inst (
 	.clk    (clk12p5), // input wire clk
 	.probe0 (DMA0_MM2S_0_tdata),
-	.probe1 (DMA0_MM2S_0_tkeep),
-	.probe2 ({DMA0_MM2S_0_tlast,DMA0_MM2S_0_tready,DMA0_MM2S_0_tvalid,dma0_mm2s_int,dma0_rstn})
+	.probe1 (decouple),//DMA0_MM2S_0_tkeep),
+	.probe2 ({DMA0_MM2S_0_tlast,DMA0_MM2S_0_tready,prdone,prerror}) //DMA0_MM2S_0_tvalid,dma0_mm2s_int,dma0_rstn})
 );
 
 
@@ -120,6 +135,7 @@ version version_inst (
 );
 
 axil_reg32 axil_reg32_inst	(
+  .dfx_decouple       (decouple),
   .git_hash_scripts   (git_hash_scripts     ),
   .git_hash_top       (git_hash_top         ),
   .git_hash_bd        (bd_githash           ),
@@ -188,12 +204,36 @@ axil_reg32 axil_reg32_inst	(
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-(* dont_touch = "true" *) RM_msk RM_msk_inst(
-  .clk        (clk100 ),
-  .rst        (rst    ),
-  .data_o     (msk_data     ),
-  .data_val_o (msk_data_val )
+dfx_decoupler_axis_src dfx_decoupler_axis_src (
+  .rp_axis_TVALID (DMA0_MM2S_0_tvalid   ),  // input wire rp_axis_TVALID
+  .rp_axis_TREADY (DMA0_MM2S_0_tready   ),  // output wire rp_axis_TREADY
+  .rp_axis_TDATA  (DMA0_MM2S_0_tdata    ),  // input wire [31 : 0] rp_axis_TDATA
+  .rp_axis_TLAST  (DMA0_MM2S_0_tlast    ),  // input wire rp_axis_TLAST
+  .rp_axis_TKEEP  (DMA0_MM2S_0_tkeep    ),  // input wire [3 : 0] rp_axis_TKEEP
+  .s_axis_TVALID  (axis_msk_tvalid      ),  // output wire s_axis_TVALID
+  .s_axis_TREADY  (axis_msk_tready      ),  // input wire s_axis_TREADY
+  .s_axis_TDATA   (axis_msk_tdata       ),  // output wire [31 : 0] s_axis_TDATA
+  .s_axis_TLAST   (axis_msk_tlast       ),  // output wire s_axis_TLAST
+  .s_axis_TKEEP   (axis_msk_tkeep       ),  // output wire [3 : 0] s_axis_TKEEP
+  .decouple       (decouple             )   // input wire decouple
 );
+
+
+
+
+(* dont_touch = "true" *) RM_msk RM_msk_inst(
+  .clk        (clk100         ),
+  .rst        (rst            ),
+  .data_o     (msk_data       ),
+  .data_val_o (msk_data_val   ),
+  .axis_tvalid(axis_msk_tvalid),
+  .axis_tready(axis_msk_tready),
+  .axis_tdata (axis_msk_tdata ),
+  .axis_tlast (axis_msk_tlast ),
+  .axis_tkeep (axis_msk_tkeep )
+);
+
+
 
 //(* dont_touch = "true" *) msk_top msk_top2(
 //  .clk        (clk100 ),
@@ -219,5 +259,9 @@ axil_reg32 axil_reg32_inst	(
     .data_val_i (msk_data_val )
   );
 */
+
+
+
+
 
 endmodule
