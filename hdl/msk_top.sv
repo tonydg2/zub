@@ -1,6 +1,8 @@
 module msk_top (
   input         clk           ,
   input         rst           ,
+  output [63:0] msk_gh        ,
+  output [31:0] msk_ts        ,
   output        data_o        ,
   output        data_val_o    ,
   input         axis_tvalid   ,
@@ -9,7 +11,76 @@ module msk_top (
   input         axis_tlast    , 
   input  [7:0]  axis_tkeep   
 );
-  assign axis_tready = '1;
+/*
+  logic [7:0] cntr=0;
+
+  always_ff @(posedge clk) begin
+    if (rst) cntr <= '0;
+    else cntr <= cntr + 1;    
+  end
+
+  ila1 ila1_0 (
+  	.clk    (clk),
+  	.probe0 ('0),
+  	.probe1 (cntr),//DMA0_MM2S_0_tkeep),
+  	.probe2 ('0)
+  );
+*/
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+//  1st sample: axis_tdata[15:0] 
+//  2nd sample: axis_tdata[31:16] 
+//  3rd sample: axis_tdata[47:32] 
+//  4th sample: axis_tdata[63:48] 
+  
+  logic [63:0]  fifo_axis_tdata;
+  logic [7:0]   fifo_axis_tkeep;
+  logic [15:0]  m_axis_tdata;
+  logic [1:0]   m_axis_tkeep;
+  logic m_axis_tvalid,m_axis_tready,m_axis_tlast,fifo_axis_tvalid,fifo_axis_tready,fifo_axis_tlast;
+
+(* dont_touch = "true" *)fifo_gen_0 fifo_gen_0 (
+  .s_aclk         (clk              ),  // input wire s_aclk
+  .s_aresetn      (~rst             ),  // input wire s_aresetn
+  .s_axis_tvalid  (axis_tvalid      ),  // input wire s_axis_tvalid
+  .s_axis_tready  (axis_tready      ),  // output wire s_axis_tready
+  .s_axis_tdata   (axis_tdata       ),  // input wire [63 : 0] s_axis_tdata
+  .s_axis_tkeep   (axis_tkeep       ),  // input wire [7 : 0] s_axis_tkeep
+  .s_axis_tlast   (axis_tlast       ),  // input wire s_axis_tlast
+  .m_axis_tvalid  (fifo_axis_tvalid ),  // output wire m_axis_tvalid
+  .m_axis_tready  (fifo_axis_tready ),  // input wire m_axis_tready
+  .m_axis_tdata   (fifo_axis_tdata  ),  // output wire [63 : 0] m_axis_tdata
+  .m_axis_tkeep   (fifo_axis_tkeep  ),  // output wire [7 : 0] m_axis_tkeep
+  .m_axis_tlast   (fifo_axis_tlast  )   // output wire m_axis_tlast
+);
+
+
+(* dont_touch = "true" *)axis_dwidth_converter_8x2 axis_dwidth_converter_8x2 (
+  .aclk           (clk              ),  // input wire aclk
+  .aresetn        (~rst             ),  // input wire aresetn
+  .s_axis_tvalid  (fifo_axis_tvalid ),  // input wire s_axis_tvalid
+  .s_axis_tready  (fifo_axis_tready ),  // output wire s_axis_tready
+  .s_axis_tdata   (fifo_axis_tdata  ),  // input wire [63 : 0] s_axis_tdata
+  .s_axis_tkeep   (fifo_axis_tkeep  ),  // input wire [7 : 0] s_axis_tkeep
+  .s_axis_tlast   (fifo_axis_tlast  ),  // input wire s_axis_tlast
+  .m_axis_tvalid  (m_axis_tvalid    ),  // output wire m_axis_tvalid
+  .m_axis_tready  (m_axis_tready    ),  // input wire m_axis_tready
+  .m_axis_tdata   (m_axis_tdata     ),  // output wire [15 : 0] m_axis_tdata
+  .m_axis_tkeep   (m_axis_tkeep     ),  // output wire [1 : 0] m_axis_tkeep
+  .m_axis_tlast   (m_axis_tlast     )   // output wire m_axis_tlast
+);
+
+  ila1 ila1_msk_inst (
+  	.clk    (clk),
+  	.probe0 ({48'h0,m_axis_tdata}),
+  	.probe1 ({6'h0,m_axis_tkeep}),//DMA0_MM2S_0_tkeep),
+  	.probe2 ({m_axis_tlast,m_axis_tready,m_axis_tvalid,'0,'0})
+  );
+
+
+  assign m_axis_tready = '1;
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
   localparam IQW = 16;
@@ -210,5 +281,17 @@ module msk_top (
     .data_valid_o (data_val_o   )
   );
 
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+  user_init_64b msk_modem_git_hash_inst (
+    .clk      (1'b0),
+    .value_o  (msk_gh)
+  );
+
+  user_init_32b msk_modem_timestamp_inst (
+    .clk      (1'b0),
+    .value_o  (msk_ts)
+  );
 
 endmodule

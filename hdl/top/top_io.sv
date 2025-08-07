@@ -38,11 +38,10 @@ module top_io (
 
   logic led0,led1,clk100,rst,rstn;
   logic [4:0] led_div1,p0,p1;
-  logic [63:0]  git_hash_scripts,git_hash_top,git_hash_common,git_hash_sw,git_hash_ip, bd_githash;
-  logic [31:0]  timestamp_scripts,timestamp_top,timestamp_common,timestamp_sw, timestamp_ip, bd_timestamp;
+  logic [63:0]  git_hash_scripts,git_hash_top,git_hash_common,git_hash_sw,git_hash_ip, bd_githash, msk_gh;
+  logic [31:0]  timestamp_scripts,timestamp_top,timestamp_common,timestamp_sw, timestamp_ip, bd_timestamp,msk_ts;
   logic [2:0]   gpio,gpio2;
   
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
   //assign DMA0_MM2S_0_tready = 1;
@@ -83,6 +82,7 @@ module top_io (
   );
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+
   ICAPE3 #(
     .DEVICE_ID          (32'h03628093), // Specifies the pre-programmed Device ID value to be used for simulation purposes.
     .ICAP_AUTO_SWITCH   ("DISABLE"), // Enable switch ICAP using sync word.
@@ -99,14 +99,14 @@ module top_io (
   );
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-logic clk12p5;
-clk_div #(.DIV(8)) clk_div_inst (.clk_i(clk100),.clk_o(clk12p5));
+//logic clk12p5;
+//clk_div #(.DIV(8)) clk_div_inst (.clk_i(clk100),.clk_o(clk12p5));
 
 ila1 ila1_inst (
-	.clk    (clk12p5), // input wire clk
+	.clk    (clk100),
 	.probe0 (DMA0_MM2S_0_tdata),
-	.probe1 (decouple),//DMA0_MM2S_0_tkeep),
-	.probe2 ({DMA0_MM2S_0_tlast,DMA0_MM2S_0_tready,prdone,prerror}) //DMA0_MM2S_0_tvalid,dma0_mm2s_int,dma0_rstn})
+	.probe1 (DMA0_MM2S_0_tkeep),
+	.probe2 ({DMA0_MM2S_0_tlast,DMA0_MM2S_0_tready,DMA0_MM2S_0_tvalid,dma0_mm2s_int,dma0_rstn})
 );
 
 
@@ -148,6 +148,8 @@ axil_reg32 axil_reg32_inst	(
   .timestamp_common   (timestamp_common     ),
   .timestamp_sw       (timestamp_sw         ),
   .timestamp_ip       (timestamp_ip         ),
+  .git_hash_msk       (msk_gh               ),
+  .timestamp_msk      (msk_ts               ),
 	.S_AXI_ACLK         (clk100               ),
 	.S_AXI_ARESETN      (rstn                 ),
 	.S_AXI_AWADDR       (AXIL_reg32_awaddr    ),
@@ -170,6 +172,7 @@ axil_reg32 axil_reg32_inst	(
 	.S_AXI_RVALID       (AXIL_reg32_rvalid    ),
 	.S_AXI_RREADY       (AXIL_reg32_rready    )
 );
+
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -218,22 +221,32 @@ dfx_decoupler_axis_src dfx_decoupler_axis_src (
   .decouple       (decouple             )   // input wire decouple
 );
 
-
-
-
-(* dont_touch = "true" *) RM_msk RM_msk_inst(
+(* DONT_TOUCH = "TRUE", KEEP_HIERARCHY = "TRUE" *)  RM_msk RM_msk_inst(
   .clk        (clk100         ),
   .rst        (rst            ),
+  .msk_gh     (msk_gh         ),
+  .msk_ts     (msk_ts         ),
   .data_o     (msk_data       ),
   .data_val_o (msk_data_val   ),
   .axis_tvalid(axis_msk_tvalid),
   .axis_tready(axis_msk_tready),
   .axis_tdata (axis_msk_tdata ),
   .axis_tlast (axis_msk_tlast ),
-  .axis_tkeep (axis_msk_tkeep )
+  .axis_tkeep (axis_msk_tkeep ),
+  .S_BSCAN_drck       (), // in
+  .S_BSCAN_shift      (), // in
+  .S_BSCAN_tdi        (), // in
+  .S_BSCAN_update     (), // in
+  .S_BSCAN_sel        (), // in
+  .S_BSCAN_tdo        (), // out
+  .S_BSCAN_tms        (), // in
+  .S_BSCAN_tck        (), // in
+  .S_BSCAN_runtest    (), // in
+  .S_BSCAN_reset      (), // in
+  .S_BSCAN_capture    (), // in
+  .S_BSCAN_bscanid_en ()  // in
+
 );
-
-
 
 //(* dont_touch = "true" *) msk_top msk_top2(
 //  .clk        (clk100 ),
@@ -260,8 +273,31 @@ dfx_decoupler_axis_src dfx_decoupler_axis_src (
   );
 */
 
-
-
-
-
 endmodule
+
+// blackbox for DFX required
+module RM_msk (
+  input         clk           ,
+  input         rst           ,
+  output [63:0] msk_gh        ,
+  output [31:0] msk_ts        ,
+  output        data_o        ,
+  output        data_val_o    ,
+  input         axis_tvalid   ,
+  output        axis_tready   ,
+  input  [63:0] axis_tdata    , 
+  input         axis_tlast    , 
+  input  [7:0]  axis_tkeep    ,
+  input         S_BSCAN_drck        ,   
+  input         S_BSCAN_shift       ,   
+  input         S_BSCAN_tdi         ,   
+  input         S_BSCAN_update      ,   
+  input         S_BSCAN_sel         ,   
+  output        S_BSCAN_tdo         ,   
+  input         S_BSCAN_tms         ,   
+  input         S_BSCAN_tck         ,   
+  input         S_BSCAN_runtest     ,   
+  input         S_BSCAN_reset       ,   
+  input         S_BSCAN_capture     ,   
+  input         S_BSCAN_bscanid_en     
+); endmodule
