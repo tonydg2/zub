@@ -35,17 +35,22 @@ module msk_top (
 //  3rd sample: axis_tdata[47:32] 
 //  4th sample: axis_tdata[63:48] 
   
-  logic [63:0]  fifo_axis_tdata;
-  logic [7:0]   fifo_axis_tkeep;
-  logic [15:0]  m_axis_tdata;
-  logic [1:0]   m_axis_tkeep;
-  logic m_axis_tvalid,m_axis_tready,m_axis_tlast,fifo_axis_tvalid,fifo_axis_tready,fifo_axis_tlast;
+  logic [63:0]  fifo_axis_tdata   ;
+  logic [7:0]   fifo_axis_tkeep   ;
+  logic [15:0]  m_axis_tdata  ;
+  logic [1:0]   m_axis_tkeep  ;
+  logic m_axis_tvalid , fifo_axis_tvalid  ;
+  logic m_axis_tready , fifo_axis_tready  ;
+  logic m_axis_tlast  , fifo_axis_tlast   ;
+  logic fifo_tready ;
 
-(* dont_touch = "true" *)fifo_gen_0 fifo_gen_0 (
+  assign axis_tready = fifo_tready;
+
+fifo_gen_0 fifo_gen_0 (
   .s_aclk         (clk              ),  // input wire s_aclk
   .s_aresetn      (~rst             ),  // input wire s_aresetn
   .s_axis_tvalid  (axis_tvalid      ),  // input wire s_axis_tvalid
-  .s_axis_tready  (axis_tready      ),  // output wire s_axis_tready
+  .s_axis_tready  (fifo_tready      ),  // output wire s_axis_tready
   .s_axis_tdata   (axis_tdata       ),  // input wire [63 : 0] s_axis_tdata
   .s_axis_tkeep   (axis_tkeep       ),  // input wire [7 : 0] s_axis_tkeep
   .s_axis_tlast   (axis_tlast       ),  // input wire s_axis_tlast
@@ -57,7 +62,7 @@ module msk_top (
 );
 
 
-(* dont_touch = "true" *)axis_dwidth_converter_8x2 axis_dwidth_converter_8x2 (
+axis_dwidth_converter_8x2 axis_dwidth_converter_8x2 (
   .aclk           (clk              ),  // input wire aclk
   .aresetn        (~rst             ),  // input wire aresetn
   .s_axis_tvalid  (fifo_axis_tvalid ),  // input wire s_axis_tvalid
@@ -72,23 +77,31 @@ module msk_top (
   .m_axis_tlast   (m_axis_tlast     )   // output wire m_axis_tlast
 );
 
-  ila1 ila1_msk_inst (
-  	.clk    (clk),
-  	.probe0 ({48'h0,m_axis_tdata}),
-  	.probe1 ({6'h0,m_axis_tkeep}),//DMA0_MM2S_0_tkeep),
-  	.probe2 ({m_axis_tlast,m_axis_tready,m_axis_tvalid,'0,'0})
-  );
+
+//  ila1 ila1_msk_inst (
+//  	.clk    (clk),
+//  	.probe0 ({dfifo_wr_cnt[15:0],dfifo_rd_cnt[15:0],m2_axis_tdata,m_axis_tdata}),
+//  	.probe1 ({dfifo_prog_full,dfifo_almost_full,dfifo_prog_empt,m2_axis_tvalid,m2_axis_tkeep,m_axis_tkeep}),//DMA0_MM2S_0_tkeep),
+//  	.probe2 ({m_axis_tlast,m_axis_tready,m_axis_tvalid,m2_axis_tlast,m2_axis_tready})
+//  );
 
 
   assign m_axis_tready = '1;
+//  assign m2_axis_tready = '1;
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+//m_axis_tvalid
+//m_axis_tready
+//m_axis_tdata
+//m_axis_tkeep
+//m_axis_tlast
+
 
   localparam IQW = 16;
   logic signed [IQW-1:0] i_ddc, q_ddc, i_raw, q_raw;
   logic rstn;
   assign rstn = ~rst;
 
-(* dont_touch = "true" *) duc_ddc_lpf_top #(
+  duc_ddc_lpf_top #(
     .DUC_EN(0),
     .DDC_EN(1),
     .FS(200e6)
@@ -96,8 +109,8 @@ module msk_top (
     .clk      (clk),
     .rst      (rst),
     //DDC
-    .adc_in   ('0), // from ADC
-    .adc_val  ('1),
+    .adc_in   (m_axis_tdata), // from ADC
+    .adc_val  (m_axis_tvalid),
     .I_out    (i_ddc), // to demod
     .Q_out    (q_ddc), // to demod
     .IQ_val   (ddc_val),
@@ -111,7 +124,7 @@ module msk_top (
   logic signed  [WERR-1:0]  ek, lf_ctrl;
 
 
-(* dont_touch = "true" *) gardner_ted #(
+  gardner_ted #(
     .RAW_DLY  (5), // adjusted here to 5 to stabilize coarse CFO. need repeat data sequence of "0011" / "00001111" 
     .OSF      (20),
     .WI       (16),
@@ -129,7 +142,7 @@ module msk_top (
     .q_raw_delay_o(q_raw    )
   );
 
-(* dont_touch = "true" *) pi_loop_filter #(
+  pi_loop_filter #(
     .KP_SHIFT  (7 ),
     .KI_SHIFT  (11),
     .WERR      (WERR),
@@ -148,7 +161,7 @@ module msk_top (
   logic [INT_W-1:0]   phase_int;
   logic [FRAC_W-1:0]  mu;
 
-(* dont_touch = "true" *) phase_accum #(
+  phase_accum #(
     .OSF       (20),
     .CTRL_W    (WERR),
     .INT_W     (INT_W),
@@ -169,7 +182,7 @@ module msk_top (
   localparam PIW = 16;
   logic signed [PIW-1:0] i_sym_interp, q_sym_interp;
 
-(* dont_touch = "true" *) polyphase_interp #(
+  polyphase_interp #(
     .OSF       (20),
     .TAPS_PPH  (INT_W ),
     .WIQ       (WIQ),
@@ -202,7 +215,7 @@ module msk_top (
   logic signed [DIW-1:0] derot_i, derot_q;
   logic signed [DDSW-1:0] dds_sin, dds_cos;
 
-(* dont_touch = "true" *) derotator #(
+  derotator #(
     .WIDTH        (DIW),
     .DDS_WIDTH    (DDSW),
     .PHASE_WIDTH  (PW)
@@ -223,7 +236,7 @@ module msk_top (
   localparam EW = 24;
   logic signed [EW-1:0] pdet_err;
 
-(* dont_touch = "true" *) phase_detector #(
+  phase_detector #(
     .IW (DIW), 
     .EW (EW)  
   ) phase_detector (
@@ -239,7 +252,7 @@ module msk_top (
 
   logic signed [PW-1:0] freq_word;
 
-(* dont_touch = "true" *) loop_filter_cfo #(
+  loop_filter_cfo #(
     .ERR_WIDTH   (EW ), 
     .PHASE_WIDTH (PW ), 
     .KP_SHIFT    (22 ), 
@@ -256,7 +269,7 @@ module msk_top (
   );
 
 
-(* dont_touch = "true" *) nco_dds #(
+  nco_dds #(
     .PHASE_WIDTH  (32),
     .AMP_WIDTH    (16) 
   ) nco_dds (
@@ -269,7 +282,9 @@ module msk_top (
     .sin_out          (dds_sin)    
   );
 
-(* dont_touch = "true" *) msk_slicer_dec #(
+  logic data_o, data_val_o;
+
+  msk_slicer_dec #(
     .IW (PIW)
   ) msk_slicer_dec_SYN(
     .clk          (clk          ),
@@ -281,6 +296,31 @@ module msk_top (
     .data_valid_o (data_val_o   )
   );
 
+
+  localparam SHIFTERWID = 48;
+  //localparam int FDW = 256;
+  //localparam logic [FDW-1:0] FIXED_DATA = 'h901000000033000000FFFFFFFF010000007700ffff00000001010000ffa50ffe;
+  logic [SHIFTERWID-1:0] srdat;
+
+  shifter_viewer # (
+    .FDW        (0),
+    .FIXED_DATA (0),
+    .WIDTH      (SHIFTERWID)
+  ) shifter_viewer_inst (
+    .clk        (clk),
+    .rst        (rst),
+    .data_i     (data_o),
+    .data_val_i (data_val_o),
+    .sr_o       (srdat)
+  );
+
+
+  ila1 ila1_msk_inst (
+  	.clk    (clk),
+  	.probe0 ({srdat,m_axis_tdata}), // [63:0]
+  	.probe1 ({1'b0,1'b0,1'b0,1'b0,2'b0,m_axis_tkeep}),  // [7:0]
+  	.probe2 ({m_axis_tlast,m_axis_tready,m_axis_tvalid,data_o,data_val_o}) // [4:0]
+  );
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

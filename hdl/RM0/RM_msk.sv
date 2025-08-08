@@ -24,7 +24,7 @@ module RM_msk (
   input         S_BSCAN_bscanid_en  
 ); 
 
-(* DONT_TOUCH = "TRUE", KEEP_HIERARCHY = "TRUE" *)  msk_top msk_top_inst(
+msk_top msk_top_inst(
   .clk        (clk          ),
   .rst        (rst          ),
   .msk_gh     (msk_gh       ),
@@ -37,6 +37,8 @@ module RM_msk (
   .axis_tlast (axis_tlast   ),
   .axis_tkeep (axis_tkeep   )
 );
+
+
 
 
 endmodule

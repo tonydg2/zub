@@ -105,7 +105,7 @@ module top_io (
 ila1 ila1_inst (
 	.clk    (clk100),
 	.probe0 (DMA0_MM2S_0_tdata),
-	.probe1 (DMA0_MM2S_0_tkeep),
+	.probe1 ({6'h0,prdone,prerror}),
 	.probe2 ({DMA0_MM2S_0_tlast,DMA0_MM2S_0_tready,DMA0_MM2S_0_tvalid,dma0_mm2s_int,dma0_rstn})
 );
 
@@ -221,7 +221,7 @@ dfx_decoupler_axis_src dfx_decoupler_axis_src (
   .decouple       (decouple             )   // input wire decouple
 );
 
-(* DONT_TOUCH = "TRUE", KEEP_HIERARCHY = "TRUE" *)  RM_msk RM_msk_inst(
+RM_msk RM_msk_inst(
   .clk        (clk100         ),
   .rst        (rst            ),
   .msk_gh     (msk_gh         ),

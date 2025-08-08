@@ -25,7 +25,7 @@
 create_pblock pblock_msk_top 
 resize_pblock pblock_msk_top -add SLICE_X0Y110:SLICE_X22Y179 
 resize_pblock pblock_msk_top -add DSP48E2_X0Y44:DSP48E2_X2Y71
-resize_pblock pblock_msk_top -add {RAMB18_X0Y46:RAMB18_X2Y71 RAMB36_X0Y22:RAMB36_X2Y35}
+resize_pblock pblock_msk_top -add {RAMB18_X0Y42:RAMB18_X2Y71 RAMB36_X0Y18:RAMB36_X2Y35}
 add_cells_to_pblock pblock_msk_top [get_cells [list RM_msk_inst]]
 
 #--------------------------------------------------------------------------------------------------
