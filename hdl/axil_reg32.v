@@ -16,18 +16,21 @@
 	(
 		// Users to add ports here
     input [63:0]  git_hash_top,
-    input [31:0]  timestamp_top,
     input [63:0]  git_hash_bd,
-    input [31:0]  timestamp_bd,
     input [63:0]  git_hash_scripts,
-    input [31:0]  timestamp_scripts,
     input [63:0]  git_hash_common,
-    input [31:0]  timestamp_common,
     input [63:0]  git_hash_sw,
-    input [31:0]  timestamp_sw,
     input [63:0]  git_hash_ip,
+
+    input [31:0]  timestamp_top,
+    input [31:0]  timestamp_bd,
+    input [31:0]  timestamp_scripts,
+    input [31:0]  timestamp_common,
+    input [31:0]  timestamp_sw,
     input [31:0]  timestamp_ip,
 
+    output [31:0] reuse_30_x78,
+    output [31:0] reuse_31_x7C,
     //output [4:0] led_div0_o,
     //output [4:0] led_div1_o,
 
@@ -724,6 +727,9 @@
   //assign led_div0_o = slv_reg30[4:0];
   //assign led_div1_o = slv_reg31[4:0];
 	// User logic ends
+
+  assign reuse_30_x78 = slv_reg30;
+  assign reuse_31_x7C = slv_reg31;
 
 	endmodule
 /*
