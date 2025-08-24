@@ -46,7 +46,7 @@ if { [string first $scripts_vivado_version $current_vivado_version] == -1 } {
 
 # The design that will be created by this Tcl script contains the following 
 # module references:
-# led_cnt_vhd19, axil_passthru, user_init_64b_wrapper_zynq
+# led_cnt_vhd19, axil_passthru, user_init_64b_wrapper_zynq, axi_passthru
 
 # Please add the sources of those modules before sourcing this Tcl script.
 
@@ -169,6 +169,7 @@ if { $bCheckModules == 1 } {
 led_cnt_vhd19\
 axil_passthru\
 user_init_64b_wrapper_zynq\
+axi_passthru\
 "
 
    set list_mods_missing ""
@@ -258,12 +259,37 @@ proc create_root_design { parentCell } {
    CONFIG.TUSER_WIDTH {0} \
    ] $S_AXIS_S2MM_DMA_0
 
+  set S_AXIS_S2MM_1k [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:axis_rtl:1.0 S_AXIS_S2MM_1k ]
+  set_property -dict [ list \
+   CONFIG.HAS_TKEEP {1} \
+   CONFIG.HAS_TLAST {1} \
+   CONFIG.HAS_TREADY {1} \
+   CONFIG.HAS_TSTRB {0} \
+   CONFIG.LAYERED_METADATA {undef} \
+   CONFIG.TDATA_NUM_BYTES {128} \
+   CONFIG.TDEST_WIDTH {0} \
+   CONFIG.TID_WIDTH {0} \
+   CONFIG.TUSER_WIDTH {0} \
+   ] $S_AXIS_S2MM_1k
+
+  set M_AXIS_MM2S_1k [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:axis_rtl:1.0 M_AXIS_MM2S_1k ]
+
+  set M_AXI_DMA_1k [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:aximm_rtl:1.0 M_AXI_DMA_1k ]
+  set_property -dict [ list \
+   CONFIG.ADDR_WIDTH {17} \
+   CONFIG.DATA_WIDTH {1024} \
+   CONFIG.HAS_REGION {0} \
+   CONFIG.NUM_READ_OUTSTANDING {2} \
+   CONFIG.NUM_WRITE_OUTSTANDING {2} \
+   CONFIG.PROTOCOL {AXI4} \
+   ] $M_AXI_DMA_1k
+
 
   # Create ports
   set led_o_0 [ create_bd_port -dir O led_o_0 ]
   set clk100 [ create_bd_port -dir O -type clk clk100 ]
   set_property -dict [ list \
-   CONFIG.ASSOCIATED_BUSIF {M_AXI_reg32_0:M_AXIS_MM2S_0:S_AXIS_S2MM_DMA_0} \
+   CONFIG.ASSOCIATED_BUSIF {M_AXI_reg32_0:M_AXIS_MM2S_0:S_AXIS_S2MM_DMA_0:M_AXIS_MM2S_1k:S_AXIS_S2MM_1k:M_AXI_DMA_1k} \
  ] $clk100
   set rst [ create_bd_port -dir O -from 0 -to 0 -type rst rst ]
   set periph_rstn [ create_bd_port -dir O -from 0 -to 0 -type rst periph_rstn ]
@@ -724,6 +750,7 @@ Port;FD4A0000;FD4AFFFF;1|FPD;DPDMA;FD4C0000;FD4CFFFF;1|FPD;DDR_XMPU5_CFG;FD05000
     CONFIG.PSU__USE__M_AXI_GP1 {0} \
     CONFIG.PSU__USE__M_AXI_GP2 {0} \
     CONFIG.PSU__USE__S_AXI_GP0 {1} \
+    CONFIG.PSU__USE__S_AXI_GP1 {0} \
   ] $zynq_ultra_ps_e_0
 
 
@@ -733,7 +760,7 @@ Port;FD4A0000;FD4AFFFF;1|FPD;DPDMA;FD4C0000;FD4CFFFF;1|FPD;DDR_XMPU5_CFG;FD05000
   # Create instance: smartconnect_0, and set properties
   set smartconnect_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:smartconnect:1.0 smartconnect_0 ]
   set_property -dict [list \
-    CONFIG.NUM_MI {2} \
+    CONFIG.NUM_MI {3} \
     CONFIG.NUM_SI {1} \
   ] $smartconnect_0
 
@@ -803,15 +830,57 @@ Port;FD4A0000;FD4AFFFF;1|FPD;DPDMA;FD4C0000;FD4CFFFF;1|FPD;DDR_XMPU5_CFG;FD05000
   ] $ilconstant_1
 
 
+  # Create instance: axi_dma_1, and set properties
+  set axi_dma_1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_dma:7.1 axi_dma_1 ]
+  set_property -dict [list \
+    CONFIG.c_addr_width {32} \
+    CONFIG.c_include_mm2s {1} \
+    CONFIG.c_include_s2mm {1} \
+    CONFIG.c_include_sg {0} \
+    CONFIG.c_m_axi_mm2s_data_width {1024} \
+    CONFIG.c_m_axi_s2mm_data_width {1024} \
+    CONFIG.c_m_axis_mm2s_tdata_width {1024} \
+    CONFIG.c_mm2s_burst_size {32} \
+    CONFIG.c_s2mm_burst_size {32} \
+    CONFIG.c_s_axis_s2mm_tdata_width {1024} \
+  ] $axi_dma_1
+
+
+  # Create instance: smartconnect_2, and set properties
+  set smartconnect_2 [ create_bd_cell -type ip -vlnv xilinx.com:ip:smartconnect:1.0 smartconnect_2 ]
+
+  # Create instance: axi_passthru_0, and set properties
+  set block_name axi_passthru
+  set block_cell_name axi_passthru_0
+  if { [catch {set axi_passthru_0 [create_bd_cell -type module -reference $block_name $block_cell_name] } errmsg] } {
+     catch {common::send_gid_msg -ssname BD::TCL -id 2095 -severity "ERROR" "Unable to add referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
+     return 1
+   } elseif { $axi_passthru_0 eq "" } {
+     catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
+     return 1
+   }
+    set_property -dict [list \
+    CONFIG.C_S_AXI_ADDR_WIDTH {17} \
+    CONFIG.C_S_AXI_DATA_WIDTH {1024} \
+  ] $axi_passthru_0
+
+
   # Create interface connections
   connect_bd_intf_net -intf_net S_AXIS_S2MM_0_1 [get_bd_intf_ports S_AXIS_S2MM_DMA_0] [get_bd_intf_pins axi_dma_0/S_AXIS_S2MM]
+  connect_bd_intf_net -intf_net S_AXIS_S2MM_0_2 [get_bd_intf_ports S_AXIS_S2MM_1k] [get_bd_intf_pins axi_dma_1/S_AXIS_S2MM]
   connect_bd_intf_net -intf_net axi_dma_0_M_AXIS_MM2S [get_bd_intf_ports M_AXIS_MM2S_0] [get_bd_intf_pins axi_dma_0/M_AXIS_MM2S]
   connect_bd_intf_net -intf_net axi_dma_0_M_AXI_MM2S [get_bd_intf_pins axi_dma_0/M_AXI_MM2S] [get_bd_intf_pins smartconnect_1/S00_AXI]
   connect_bd_intf_net -intf_net axi_dma_0_M_AXI_S2MM [get_bd_intf_pins axi_dma_0/M_AXI_S2MM] [get_bd_intf_pins smartconnect_1/S01_AXI]
+  connect_bd_intf_net -intf_net axi_dma_1_M_AXIS_MM2S [get_bd_intf_ports M_AXIS_MM2S_1k] [get_bd_intf_pins axi_dma_1/M_AXIS_MM2S]
+  connect_bd_intf_net -intf_net axi_dma_1_M_AXI_MM2S [get_bd_intf_pins smartconnect_2/S00_AXI] [get_bd_intf_pins axi_dma_1/M_AXI_MM2S]
+  connect_bd_intf_net -intf_net axi_dma_1_M_AXI_S2MM [get_bd_intf_pins smartconnect_2/S01_AXI] [get_bd_intf_pins axi_dma_1/M_AXI_S2MM]
+  connect_bd_intf_net -intf_net axi_passthru_0_M_AXI [get_bd_intf_ports M_AXI_DMA_1k] [get_bd_intf_pins axi_passthru_0/M_AXI]
   connect_bd_intf_net -intf_net pl_axil_reg32_0_M_AXI [get_bd_intf_ports M_AXI_reg32_0] [get_bd_intf_pins pl_axil_reg32_0/M_AXI]
   connect_bd_intf_net -intf_net smartconnect_0_M00_AXI [get_bd_intf_pins pl_axil_reg32_0/S_AXI] [get_bd_intf_pins smartconnect_0/M00_AXI]
   connect_bd_intf_net -intf_net smartconnect_0_M01_AXI [get_bd_intf_pins smartconnect_0/M01_AXI] [get_bd_intf_pins axi_dma_0/S_AXI_LITE]
+  connect_bd_intf_net -intf_net smartconnect_0_M02_AXI [get_bd_intf_pins smartconnect_0/M02_AXI] [get_bd_intf_pins axi_dma_1/S_AXI_LITE]
   connect_bd_intf_net -intf_net smartconnect_1_M00_AXI [get_bd_intf_pins smartconnect_1/M00_AXI] [get_bd_intf_pins zynq_ultra_ps_e_0/S_AXI_HPC0_FPD]
+  connect_bd_intf_net -intf_net smartconnect_2_M00_AXI [get_bd_intf_pins axi_passthru_0/S_AXI] [get_bd_intf_pins smartconnect_2/M00_AXI]
   connect_bd_intf_net -intf_net zynq_ultra_ps_e_0_M_AXI_HPM0_FPD [get_bd_intf_pins smartconnect_0/S00_AXI] [get_bd_intf_pins zynq_ultra_ps_e_0/M_AXI_HPM0_FPD]
 
   # Create port connections
@@ -835,7 +904,10 @@ Port;FD4A0000;FD4AFFFF;1|FPD;DPDMA;FD4C0000;FD4CFFFF;1|FPD;DDR_XMPU5_CFG;FD05000
   [get_bd_pins smartconnect_1/aresetn]
   connect_bd_net -net proc_sys_reset_0_peripheral_aresetn  [get_bd_pins proc_sys_reset_0/peripheral_aresetn] \
   [get_bd_ports periph_rstn] \
-  [get_bd_pins axi_dma_0/axi_resetn]
+  [get_bd_pins axi_dma_0/axi_resetn] \
+  [get_bd_pins axi_dma_1/axi_resetn] \
+  [get_bd_pins smartconnect_2/aresetn] \
+  [get_bd_pins axi_passthru_0/aresetn]
   connect_bd_net -net proc_sys_reset_0_peripheral_reset  [get_bd_pins proc_sys_reset_0/peripheral_reset] \
   [get_bd_ports rst] \
   [get_bd_pins led_cnt_vhd19_0/rst]
@@ -854,21 +926,30 @@ Port;FD4A0000;FD4AFFFF;1|FPD;DPDMA;FD4C0000;FD4CFFFF;1|FPD;DDR_XMPU5_CFG;FD05000
   [get_bd_pins axi_dma_0/m_axi_mm2s_aclk] \
   [get_bd_pins zynq_ultra_ps_e_0/saxihpc0_fpd_aclk] \
   [get_bd_pins smartconnect_1/aclk] \
-  [get_bd_pins axi_dma_0/m_axi_s2mm_aclk]
+  [get_bd_pins axi_dma_0/m_axi_s2mm_aclk] \
+  [get_bd_pins axi_dma_1/s_axi_lite_aclk] \
+  [get_bd_pins axi_dma_1/m_axi_mm2s_aclk] \
+  [get_bd_pins axi_dma_1/m_axi_s2mm_aclk] \
+  [get_bd_pins smartconnect_2/aclk] \
+  [get_bd_pins axi_passthru_0/aclk]
   connect_bd_net -net zynq_ultra_ps_e_0_pl_resetn0  [get_bd_pins zynq_ultra_ps_e_0/pl_resetn0] \
   [get_bd_pins proc_sys_reset_0/ext_reset_in]
 
   # Create address segments
   assign_bd_address -offset 0xA0010000 -range 0x00010000 -target_address_space [get_bd_addr_spaces zynq_ultra_ps_e_0/Data] [get_bd_addr_segs axi_dma_0/S_AXI_LITE/Reg] -force
+  assign_bd_address -offset 0xA0020000 -range 0x00010000 -target_address_space [get_bd_addr_spaces zynq_ultra_ps_e_0/Data] [get_bd_addr_segs axi_dma_1/S_AXI_LITE/Reg] -force
   assign_bd_address -offset 0xA0000000 -range 0x00000080 -target_address_space [get_bd_addr_spaces zynq_ultra_ps_e_0/Data] [get_bd_addr_segs pl_axil_reg32_0/S_AXI/reg0] -force
   assign_bd_address -offset 0x00000000 -range 0x80000000 -target_address_space [get_bd_addr_spaces axi_dma_0/Data_MM2S] [get_bd_addr_segs zynq_ultra_ps_e_0/SAXIGP0/HPC0_DDR_LOW] -force
   assign_bd_address -offset 0xC0000000 -range 0x20000000 -target_address_space [get_bd_addr_spaces axi_dma_0/Data_MM2S] [get_bd_addr_segs zynq_ultra_ps_e_0/SAXIGP0/HPC0_QSPI] -force
   assign_bd_address -offset 0x00000000 -range 0x80000000 -target_address_space [get_bd_addr_spaces axi_dma_0/Data_S2MM] [get_bd_addr_segs zynq_ultra_ps_e_0/SAXIGP0/HPC0_DDR_LOW] -force
   assign_bd_address -offset 0xC0000000 -range 0x20000000 -target_address_space [get_bd_addr_spaces axi_dma_0/Data_S2MM] [get_bd_addr_segs zynq_ultra_ps_e_0/SAXIGP0/HPC0_QSPI] -force
+  assign_bd_address -offset 0x00000000 -range 0x00020000 -target_address_space [get_bd_addr_spaces axi_dma_1/Data_MM2S] [get_bd_addr_segs axi_passthru_0/S_AXI/reg0] -force
+  assign_bd_address -offset 0x00000000 -range 0x00020000 -target_address_space [get_bd_addr_spaces axi_dma_1/Data_S2MM] [get_bd_addr_segs axi_passthru_0/S_AXI/reg0] -force
 
   # Exclude Address Segments
   exclude_bd_addr_seg -offset 0xFF000000 -range 0x01000000 -target_address_space [get_bd_addr_spaces axi_dma_0/Data_MM2S] [get_bd_addr_segs zynq_ultra_ps_e_0/SAXIGP0/HPC0_LPS_OCM]
   exclude_bd_addr_seg -offset 0xFF000000 -range 0x01000000 -target_address_space [get_bd_addr_spaces axi_dma_0/Data_S2MM] [get_bd_addr_segs zynq_ultra_ps_e_0/SAXIGP0/HPC0_LPS_OCM]
+  exclude_bd_addr_seg -offset 0x00000000 -range 0x00010000 -target_address_space [get_bd_addr_spaces axi_passthru_0/M_AXI] [get_bd_addr_segs M_AXI_DMA_1k/Reg]
   exclude_bd_addr_seg -offset 0x00000000 -range 0x00000080 -target_address_space [get_bd_addr_spaces pl_axil_reg32_0/M_AXI] [get_bd_addr_segs M_AXI_reg32_0/Reg]
 
 
