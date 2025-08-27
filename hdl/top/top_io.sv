@@ -1,3 +1,6 @@
+// (* DONT_TOUCH = "TRUE", KEEP_HIERARCHY = "TRUE" *)
+
+
 module top_io (
     output [2:0]    led_0,
     output [2:0]    led_1,
@@ -79,13 +82,27 @@ module top_io (
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-//  led_cnt led_cnt_inst (
-//    .rst      (~rstn    ),
-//    .clk100   (clk100   ),
-//    .div_i    (led_div1 ),
-//    .wren_i   ('0       ),
-//    .led_o    (led1     ) //BLUE
-//  );
+//(* KEEP_HIERARCHY = "TRUE" *) led_cnt led_cnt_inst (
+RM_led RM_led_inst (
+    .rst  (~rstn  ),
+    .clk  (clk100 ),
+    //.div_i    (5'h1     ), // [4:0]
+    //.wren_i   ('0       ),
+    .led_o  (led  )
+  );
+
+//(* KEEP_HIERARCHY = "TRUE" *) led_cnt led_cnt_inst2 (
+RM_led2 RM_led2_inst (
+    .rst  (~rstn    ),
+    .clk  (clk100   ),
+    //.div_i    (5'hA     ),
+    //.wren_i   ('0       ),
+    .led_o  (led2     )
+  );
+
+assign led_0  = {led,led,led};
+assign led_1  = {led2,led2,led2};
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 version version_inst (
@@ -139,6 +156,7 @@ axil_reg32 axil_reg32_inst	(
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+/*
   logic [1:0] idx;
   logic [2:0] ledsr,cnt;
   logic ledre;
@@ -166,9 +184,24 @@ axil_reg32 axil_reg32_inst	(
   assign led_1[2] = cnt[0];
   assign led_1[1] = cnt[1];
   assign led_1[0] = cnt[2];
-
+*/
 
 
 
 
 endmodule
+
+// blackbox for DFX
+
+module RM_led (
+  input         clk   ,
+  input         rst   ,
+  output        led_o        
+); endmodule
+
+module RM_led2 (
+  input         clk   ,
+  input         rst   ,
+  output        led_o        
+); endmodule
+
