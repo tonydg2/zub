@@ -19,7 +19,7 @@ module RM_led (
   led_cnt led_cnt_inst (
     .rst    (rst  ),
     .clk100 (clk  ),
-    .div_i  (5'h6 ), // [4:0]
+    .div_i  (5'h13 ), // [4:0]
     .wren_i ('0   ),
     .led_o  (led_o)
   );
