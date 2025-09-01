@@ -9,10 +9,11 @@ Avnet ZUBoard-1CG
 - bare-metal SW see:  /sub/sw/src/zub/dfx_bitsream_load/embedded_in_mem/
 
 
+# -------------------------------------------------------------------------------------------------
 ### partial bitstream (bin) in QSPI flash (NOT a boot image)
-
-
 #### NOTES
+ * byte sizes below derived from above xxd command, used the same bitstreams. necessary in SW for load from QSPI and bitsream load
+
  - commands/output from program flash with boot image - vitis gui:
 
 program_flash -f /mnt/TDG_512/projects/0_zub_dfx_live_load/output_products/test/BOOT.bin -offset 0x00010000 -flash_type qspi-x4-single -fsbl /mnt/TDG_512/projects/0_zub_dfx_live_load/sub/sw/work/platform/zynqmp_fsbl/build/fsbl.elf -blank_check -verify -url TCP:127.0.0.1:3121
@@ -23,6 +24,7 @@ program_flash -f /mnt/TDG_512/projects/0_zub_dfx_live_load/output_products/test/
   -fsbl /mnt/TDG_512/projects/0_zub_dfx_live_load/sub/sw/work/platform/zynqmp_fsbl/build/fsbl.elf 
   -blank_check -verify 
   -url TCP:127.0.0.1:3121
+
 
 ##### bitsream A  - RM0_RM_led_2_partial.bin
   - store at addr 0x00010000
