@@ -42,7 +42,6 @@ Avnet ZUBoard-1CG
 
 # -------------------------------------------------------------------------------------------------
 
-
 # -------------------------------------------------------------------------------------------------
 ### partial bitstream (bin) in QSPI flash (NOT a boot image)
 #### NOTES
@@ -101,3 +100,10 @@ Note: Offsets ≥ 16 MB require 4-byte addressing. ZynqMP’s QSPI driver handle
 
 
 
+# -------------------------------------------------------------------------------------------------
+## SD CARD
+# -------------------------------------------------------------------------------------------------
+- xilffs_polled_example.c
+- on SD1 interface -> logical drive 1. "1:/" must prepend filename:
+  * static char FileName[32] = "1:/RM0_RM_led_2_partial.bin";
+	* const TCHAR *Path = "1:/";
