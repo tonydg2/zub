@@ -9,6 +9,40 @@ Avnet ZUBoard-1CG
 - bare-metal SW see:  /sub/sw/src/zub/dfx_bitsream_load/embedded_in_mem/
 
 
+
+# -------------------------------------------------------------------------------------------------
+## Instructions to repeat QSPI flash partial bitsream load
+### build fpga project
+>tclsh BUILD.tcl -name PRJ0
+
+### build two partials - this is only needed to get bin files (bin generation only implemented for partial builds currently - to be updated)
+>tclsh BUILD.tcl -RM RM0/RM_led_2.sv -skipIP -skipBD -RMbin
+>tclsh BUILD.tcl -RM RM1/RM_led2_2.sv -skipIP -skipBD -RMbin
+
+### generate headers. don't need here, just to verify file size. these can also be used to verify data, SW will read out some of the data read from the flash
+>xxd -i RM0_RM_led_2_partial.bin > RM0_RM_led_2_partial.h
+*  135248 bytes
+>xxd -i RM1_RM_led2_2_partial.bin > RM1_RM_led2_2_partial.h
+*  287912 bytes
+
+### create platform proj in vitis
+  - enable xilfpga in BSP
+### build platform (need fsbl) 
+
+### load bin files onto QSPI flash
+* RM0 to addr offset 0x00010000:
+> program_flash -f /mnt/TDG_512/projects/1_zub_test/output_products/bit/RM0/RM0_RM_led_2_partial.bin -offset 0x00010000 -flash_type qspi-x4-single -fsbl /mnt/TDG_512/projects/1_zub_test/sub/sw/work/platform/zynqmp_fsbl/build/fsbl.elf -blank_check -verify -url TCP:127.0.0.1:3121
+* RM1 to addr offset 0x00040000:
+> program_flash -f /mnt/TDG_512/projects/1_zub_test/output_products/bit/RM1/RM1_RM_led2_2_partial.bin -offset 0x00040000 -flash_type qspi-x4-single -fsbl /mnt/TDG_512/projects/1_zub_test/sub/sw/work/platform/zynqmp_fsbl/build/fsbl.elf -blank_check -verify -url TCP:127.0.0.1:3121
+
+### create app in vitis (/sub/sw/src/zub/dfx_bitsream_load/qspi_flash_cleaner/)
+  run 'i'   -   run_qspi_read_test(); // reads both bin files from flash into memory
+  run 'j'   -   loadPartialBit((UINTPTR)ReadBuffer, rm0_len);
+  run 'k'   -   loadPartialBit((UINTPTR)ReadBuffer2, rm1_len);
+
+# -------------------------------------------------------------------------------------------------
+
+
 # -------------------------------------------------------------------------------------------------
 ### partial bitstream (bin) in QSPI flash (NOT a boot image)
 #### NOTES
@@ -64,7 +98,6 @@ You’re not booting from QSPI, so the whole chip is yours. One simple, robust m
 0x01000000 — Bitstream B (16 MB boundary, easy to remember)
 (Replace addresses to taste; just keep them at least 64 KB aligned. 4 KB also works, but 64 KB makes erases fast and tidy.)
 Note: Offsets ≥ 16 MB require 4-byte addressing. ZynqMP’s QSPI driver handles this when configured; just be mindful if you write your own low-level ops.
-
 
 
 
